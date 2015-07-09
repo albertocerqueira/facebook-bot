@@ -11,38 +11,10 @@ import org.apache.thrift.TException;
 
 public interface Idao {
 
-	/**
-	 * Metodo responsavel por inserir dado no DB Cassandra. 
-	 * 
-	 * @param columnFamily String : Nome da column family que sera persistido os dados.
-	 * @param rowKey String : Row key que tera suas informacoes gravada.
-	 * @param superColumn String : Nome da super column com que as columns seram persistidas.
-	 * @param column Column : Column para persistencia no banco.
-	 * 
-	 * @throws InvalidRequestException chamada de metodos invalido.
-	 * @throws UnavailableException servlet não está ativo.
-	 * @throws TimedOutException tempo de bloqueo na acao excedido.
-	 * @throws TException erro generico do Thrift. Pode ser de qualquer tipo.
-	 * @throws UnsupportedEncodingException caracteres invalidos dentro da column.
-	 */
 	public void insertSuperColumn(String columnFamily, String rowKey, String superColumn, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
-	
-	/**
-	 * Metodo responsavel por inserir dados no DB Cassandra.
-	 * 
-	 * @param columnFamily String : Nome da column family que sera persistido os dados.
-	 * @param rowKey String : Row key que tera suas informacoes gravada.
-	 * @param superColumn String : Nome da super column com que as columns seram persistidas.
-	 * @param columns List<Column> : Columns para persistencia no banco.
-	 * 
-	 * @throws InvalidRequestException chamada de metodos invalido.
-	 * @throws UnavailableException servlet não está ativo.
-	 * @throws TimedOutException tempo de bloqueo na acao excedido.
-	 * @throws TException erro generico do Thrift. Pode ser de qualquer tipo.
-	 * @throws UnsupportedEncodingException caracteres invalidos dentro da column.
-	 */
 	public void insertSuperColumns(String columnFamily, String rowKey, String superColumn, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
-
+	public void insertColumn(String columnFamily, String rowKey, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
+	public void insertColumns(String columnFamily, String rowKey, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
 	
 	//TODO: Ajustar dados abaixo...
 	/**

@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.cassandra.thrift.Cassandra;
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnOrSuperColumn;
+import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.Deletion;
 import org.apache.cassandra.thrift.InvalidRequestException;
 import org.apache.cassandra.thrift.Mutation;
@@ -42,6 +43,7 @@ public class Dao implements Idao {
 		getConnector().close();
 	}
 	
+	@Override
 	public void insertSuperColumn(String columnFamily, String rowKey, String superColumn, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
 		Map<ByteBuffer, Map<String, List<Mutation>>> outerMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
 		List<Mutation> columnsToAdd = new ArrayList<Mutation>();
@@ -62,6 +64,7 @@ public class Dao implements Idao {
 		getClientClose();
 	}
 	
+	@Override
 	public void insertSuperColumns(String columnFamily, String rowKey, String superColumn, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
 		Map<ByteBuffer, Map<String, List<Mutation>>> outerMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
 		List<Mutation> columnsToAdd = new ArrayList<Mutation>();
@@ -80,8 +83,27 @@ public class Dao implements Idao {
 		getClientClose();
 	}
 	
+	@Override
+	public void insertColumn(String columnFamily, String rowKey, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+		ColumnParent parent = new ColumnParent(columnFamily);
+        ByteBuffer rowid = ByteBuffer.wrap(rowKey.getBytes());
+        getClientConect().insert(rowid, parent, column, CL_1);
+        getClientClose();
+	}
+
+	@Override
+	public void insertColumns(String columnFamily, String rowKey, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+		ColumnParent parent = new ColumnParent(columnFamily);
+        ByteBuffer rowid = ByteBuffer.wrap(rowKey.getBytes());
+        for (Column column : columns) {
+        	getClientConect().insert(rowid, parent, column, CL_1);
+		}
+        getClientClose();
+	}
+	
 	
 	//TODO: Ajustar metodos abaixo...
+	@Override
 	public void removeSuperColumn(String columnFamily, String rowKey, String superColumnName) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
 		Clock clock = new Clock(System.nanoTime());
 		Map<ByteBuffer, Map<String, List<Mutation>>> outerMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
@@ -99,6 +121,7 @@ public class Dao implements Idao {
 		getClientClose();
 	}
 
+	@Override
 	public void removeColumnSuperColumn(String columnFamily, String rowKey, String superColumnName, String columnName, Integer count) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
 		Clock clock = new Clock(System.nanoTime());
 		Map<ByteBuffer, Map<String, List<Mutation>>> outerMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();

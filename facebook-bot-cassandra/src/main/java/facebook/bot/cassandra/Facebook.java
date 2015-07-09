@@ -1,6 +1,7 @@
 package facebook.bot.cassandra;
 
 import static facebook.bot.cassandra.Constants.COLUMN_FAMILY_FACEBOOK_COMMENT_LIKE_COUNT;
+import static facebook.bot.cassandra.Constants.COLUMN_FAMILY_FACEBOOK_POST_PAGE_POPULAR;
 import static facebook.bot.cassandra.Constants.UTF8;
 
 import java.io.UnsupportedEncodingException;
@@ -26,6 +27,33 @@ public class Facebook {
 			column.setValue(likeCount.getBytes(UTF8));
 			column.setTimestamp(clock.timestamp);
 			dao.insertSuperColumn(COLUMN_FAMILY_FACEBOOK_COMMENT_LIKE_COUNT, commentId, postId, column);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("[Info: encoding invalid] - [Error: " + e.getMessage() + "]", e);
+		}
+	}
+	
+	public static void insertPostPagePopular(String type, Integer rankingPosition, String postId, String userId, String userName, String someText) {
+		try {
+			Idao dao = new Dao();
+			Clock clock = new Clock(System.nanoTime());
+			Column column = new Column();
+			String post = (postId + "-" + userId + "-" + userName);
+			column.setName(post.getBytes(UTF8));
+			column.setValue(someText.getBytes(UTF8));
+			column.setTimestamp(clock.timestamp);
+			String rowKey = (type + "-" + rankingPosition);
+			dao.insertColumn(COLUMN_FAMILY_FACEBOOK_POST_PAGE_POPULAR, rowKey, column);
 		} catch (InvalidRequestException e) {
 			logger.info("unusual exception occurred");
 			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);

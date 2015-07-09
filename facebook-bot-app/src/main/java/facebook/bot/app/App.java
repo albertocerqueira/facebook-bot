@@ -10,19 +10,19 @@ public class App {
 	public static void main(String[] args) throws InterruptedException {
 		logger.info("starting app");
 
-		new Thread().sleep(Process.in10Seconds.getTime());
+		new Thread().sleep(Process.in1Second.getTime());
 	    
 		logger.info("starting thread TSearch");
 		TSearch tSearch = new TSearch(Process.in3Seconds.getTime());
 		tSearch.start();
 		
-		new Thread().sleep(Process.in10Seconds.getTime());
+		new Thread().sleep(Process.in1Second.getTime());
 		
 		logger.info("starting thread TGroup");
 		TGroup tGroup = new TGroup(Process.in3Seconds.getTime());
 		tGroup.start();
 		
-		new Thread().sleep(Process.in10Seconds.getTime());
+		new Thread().sleep(Process.in1Second.getTime());
 		
 		logger.info("starting thread TUser");
 		TUser tUser = new TUser(Process.in3Seconds.getTime());
