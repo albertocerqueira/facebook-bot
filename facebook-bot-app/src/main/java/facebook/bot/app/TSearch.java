@@ -3,6 +3,9 @@ package facebook.bot.app;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import facebook4j.Comment;
 import facebook4j.FacebookException;
 import facebook4j.Group;
@@ -12,6 +15,7 @@ import facebook4j.ResponseList;
 
 public class TSearch extends Thread {
 
+	final static Logger logger = LoggerFactory.getLogger(TSearch.class);
 	private static LinkedList<String> words = new LinkedList<String>();
 	private long time = 0;
 	
@@ -24,13 +28,12 @@ public class TSearch extends Thread {
     public void run() {
         while (true) {
             try {
-            	String word = getWord();
-            	
             	if (words.size() > 0) {
+            		String word = getWord();
             		searchGroups(word);
             		searchPosts(word);
             	} else {
-            		// TODO: Inserir log...
+            		logger.info("there no are words for verification");
             	}
                 TGroup.sleep(time);
             } catch (Exception e) {
@@ -73,8 +76,7 @@ public class TSearch extends Thread {
 				TGroup.addGroupId(group.getId());
 			}
 		} catch (FacebookException e) {
-			// TODO: Inserir log...
-			e.printStackTrace();
+			logger.error("[Error Code: " + e.getErrorCode() + "] - [Error: " + e.getErrorMessage() + "]", e);
 		}
 	}
 	
@@ -91,8 +93,7 @@ public class TSearch extends Thread {
 				}
 			}
 		} catch (FacebookException e) {
-			// TODO: Inserir log...
-			e.printStackTrace();
+			logger.error("[Error Code: " + e.getErrorCode() + "] - [Error: " + e.getErrorMessage() + "]", e);
 		}
 	}
 }

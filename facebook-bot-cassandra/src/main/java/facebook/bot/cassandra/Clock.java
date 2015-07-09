@@ -355,11 +355,10 @@ public class Clock implements TBase<Clock, Clock._Fields>, java.io.Serializable,
 	}
 
 	public _Fields fieldForId(int fieldId) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public void clear() {
-		// TODO Auto-generated method stub
+		
 	}
 }

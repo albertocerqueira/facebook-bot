@@ -3,6 +3,9 @@ package facebook.bot.app;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import facebook4j.Comment;
 import facebook4j.FacebookException;
 import facebook4j.PagableList;
@@ -11,6 +14,7 @@ import facebook4j.ResponseList;
 
 public class TUser extends Thread {
 
+	final static Logger logger = LoggerFactory.getLogger(TUser.class);
 	private static LinkedList<String> userIds = new LinkedList<String>();
 	private long time = 0;
 	
@@ -23,12 +27,11 @@ public class TUser extends Thread {
     public void run() {
         while (true) {
             try {
-            	String userId = getUserId();
-            	
             	if (userIds.size() > 0) {
+            		String userId = getUserId();
             		checkFeed(userId);
             	} else {
-            		// TODO: Inserir log...
+            		logger.info("there no are users for verification");
             	}
                 TUser.sleep(time);
             } catch (Exception e) {
@@ -76,8 +79,7 @@ public class TUser extends Thread {
 				}
 			}
 		} catch (FacebookException e) {
-			// TODO: Inserir log...
-			e.printStackTrace();
+			logger.error("[Error Code: " + e.getErrorCode() + "] - [Error: " + e.getErrorMessage() + "]", e);
 		}
 	}
 }

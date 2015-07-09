@@ -3,6 +3,9 @@ package facebook.bot.app;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import facebook4j.Comment;
 import facebook4j.FacebookException;
 import facebook4j.PagableList;
@@ -11,6 +14,7 @@ import facebook4j.ResponseList;
 
 public class TGroup extends Thread {
 
+	final static Logger logger = LoggerFactory.getLogger(TGroup.class);
 	private static LinkedList<String> groupIds = new LinkedList<String>();
 	private long time = 0;
 	
@@ -23,12 +27,11 @@ public class TGroup extends Thread {
     public void run() {
         while (true) {
             try {
-            	String groupId = getGroupId();
-            	
             	if (groupIds.size() > 0) {
+            		String groupId = getGroupId();
             		checkFeed(groupId);
             	} else {
-            		// TODO: Inserir log...
+            		logger.info("there no are groups for verification");
             	}
                 TGroup.sleep(time);
             } catch (Exception e) {
@@ -77,8 +80,7 @@ public class TGroup extends Thread {
 				}
 			}
 		} catch (FacebookException e) {
-			// TODO: Inserir log...
-			e.printStackTrace();
+			logger.error("[Error Code: " + e.getErrorCode() + "] - [Error: " + e.getErrorMessage() + "]", e);
 		}
 	}
 }

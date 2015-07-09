@@ -10,9 +10,13 @@ import org.apache.cassandra.thrift.InvalidRequestException;
 import org.apache.cassandra.thrift.TimedOutException;
 import org.apache.cassandra.thrift.UnavailableException;
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Facebook {
 
+	final static Logger logger = LoggerFactory.getLogger(Facebook.class);
+	
 	public static void insertCommentLikeCount(String commentId, String postId, String userId, String likeCount) {
 		try {
 			Idao dao = new Dao();
@@ -23,31 +27,18 @@ public class Facebook {
 			column.setTimestamp(clock.timestamp);
 			dao.insertSuperColumn(COLUMN_FAMILY_FACEBOOK_COMMENT_LIKE_COUNT, commentId, postId, column);
 		} catch (InvalidRequestException e) {
-			e.printStackTrace();
-			//Dificilmente ocorrera esse erro.
-			//Descricao: Essa exceção e lancada quando um cliente JAXR tenta chamar um método de API que nao e valido, por algum motivo.
-			//String message = GerenciadorMensagem.getMessage("system.db.cassandra.exception", PeopleDAO.class.getName(), "insertColumn", e.getClass().getName(), e.getMessage());
-			//throw new CriticalUserException(PeopleFinder.class, message);
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
 		} catch (UnavailableException e) {
-			e.printStackTrace();
-			//Dificilmente ocorrera esse erro.
-			//Descricao: Lancada pelo servlet container quando o servlet nao esta ativo.
-			//String message = GerenciadorMensagem.getMessage("system.db.cassandra.exception", PeopleDAO.class.getName(), "insertColumn", e.getClass().getName(), e.getMessage());
-			//throw new CriticalUserException(PeopleFinder.class, message);
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
 		} catch (TimedOutException e) {
-			e.printStackTrace();
-			//Dificilmente ocorrera esse erro.
-			//Descricao: Excecao lancada quando o metodo excede o bloqueio de tempo da acao.
-			//String message = GerenciadorMensagem.getMessage("system.db.cassandra.time.out.exception");
-			//throw new CriticalUserException(PeopleFinder.class, message);
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
 		} catch (TException e) {
-			e.printStackTrace();
-			//Descricao: Excecao generica do Thrift.
-			//String message = GerenciadorMensagem.getMessage("system.db.cassandra.exception.thrift");
-			//throw new CriticalUserException(PeopleFinder.class, message);
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("[Info: encoding invalid] - [Error: " + e.getMessage() + "]", e);
 		}
 	}
 }
