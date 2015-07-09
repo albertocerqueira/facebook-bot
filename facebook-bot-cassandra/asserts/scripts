@@ -1,0 +1,5 @@
+--create keyspace
+CREATE KEYSPACE social with placement_strategy = 'org.apache.cassandra.locator.SimpleStrategy' and strategy_options = {replication_factor:1};
+
+--create super column
+CREATE COLUMN FAMILY facebook_comment_like_count WITH column_type = 'Super' AND default_validation_class = 'UTF8Type' AND comparator = 'UTF8Type' AND subcomparator = 'UTF8Type' AND key_validation_class = 'UTF8Type';

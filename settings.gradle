@@ -1,0 +1,2 @@
+
+include "facebook-bot-lib", "facebook-bot-app", "facebook-bot-cassandra"

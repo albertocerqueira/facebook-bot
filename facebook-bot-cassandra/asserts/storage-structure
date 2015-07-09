@@ -1,0 +1,12 @@
+Storage Structure:
+
+keyspace column-family['row-key']['super-column']['column'] = 'value';
+
+Facebook: Comments more likes (like count):
+facebook_comment_like_count[comment-id][post-id][user-id] = 'like-count';
+
+Facebook: Most popular users post (like count / comment count):
+facebook_post_user_popular[post-id][user-id][comments-count] = 'like-count';
+
+Facebook: Most popular page post (like count / comment count):
+facebook_post_page_popular[post-id][page-id][comments-count] = 'like-count';

@@ -1,0 +1,4 @@
+dependencies {
+	compile 'org.apache.cassandra:cassandra-thrift:2.1.7'
+	compile project(':facebook-bot-lib')
+}
