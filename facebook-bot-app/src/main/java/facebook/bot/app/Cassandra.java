@@ -28,6 +28,8 @@ public class Cassandra {
 	final static Logger logger = LoggerFactory.getLogger(Cassandra.class);
 	private static ICassandra dao = new CassandraImpl();
 	
+	// TODO: remove try/catch this class. 
+	
 	public static String createString(byte[] bytes) {
 		try {
 			return (new String(bytes, UTF8));
@@ -78,7 +80,7 @@ public class Cassandra {
 		}
 	}
 	
-	public static void insertPostPopular(Post post, String type, Integer rankingPosition) {
+	public static void insertPostPopular(Post post, String type, Integer position) {
 		try {
 			String postId = post.getId();
 			IdNameEntity idNameEntity = post.getFrom();
@@ -86,7 +88,7 @@ public class Cassandra {
 			String userName = idNameEntity.getName();
 			
 			String columnFamily = COLUMN_FAMILY_FACEBOOK_POST_POPULAR;
-			String rowKey = (type + "-" + rankingPosition);
+			String rowKey = (type + "-" + position);
 			
 			Clock clock = new Clock(System.nanoTime());
 			Column column = new Column();
@@ -116,6 +118,12 @@ public class Cassandra {
 		}
 	}
 	
+	// TODO: this method needs to be tested
+	public static void updatePostPopular(Post post, String type, Integer position) {
+		removePostPopular(type, position);
+		insertPostPopular(post, type, position);
+	}
+	
 	public static void removePost(Post post, String type) {
 		try {
 			String postId = post.getId();
@@ -132,7 +140,7 @@ public class Cassandra {
 			logger.info("unusual exception occurred");
 			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
 		} catch (InvalidRequestException e) {
-			logger.info("unusual exception occurred");
+			logger.info("unusual exception occurred");//TODO: check return stack with problems
 			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
 		} catch (UnavailableException e) {
 			logger.info("unusual exception occurred");
@@ -147,18 +155,12 @@ public class Cassandra {
 		}
 	}
 	
-	public static void removePostPopular(Post post, String type, Integer position) {
+	public static void removePostPopular(String type, Integer position) {
 		try {
-			String postId = post.getId();
-			IdNameEntity idNameEntity = post.getFrom();
-			String userId = idNameEntity.getId();
-			String userName = idNameEntity.getName();
-			
 			String columnFamily = COLUMN_FAMILY_FACEBOOK_POST_POPULAR;
 			String rowKey = (type + "-" + position);
-			String column = postId + "-" + userId + "-" + userName;
 			
-			dao.removeColumn(columnFamily, rowKey, column);
+			dao.removeColumn(columnFamily, rowKey);
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
 			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);

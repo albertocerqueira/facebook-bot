@@ -14,6 +14,7 @@ import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnOrSuperColumn;
 import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.ColumnPath;
+import org.apache.cassandra.thrift.Compression;
 import org.apache.cassandra.thrift.Deletion;
 import org.apache.cassandra.thrift.InvalidRequestException;
 import org.apache.cassandra.thrift.KeyRange;
@@ -53,9 +54,9 @@ public class CassandraImpl implements ICassandra {
 	
 	@Override
 	public void insertSuperColumn(String columnFamily, String rowKey, String superColumn, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		Map<ByteBuffer, Map<String, List<Mutation>>> outerMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
-		List<Mutation> columnsToAdd = new ArrayList<Mutation>();
-		Map<String, List<Mutation>> innerMap = new HashMap<String, List<Mutation>>();
+		Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
+		Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
+		List<Mutation> mutationList = new ArrayList<Mutation>();
 		Mutation m = new Mutation();
 		ColumnOrSuperColumn cosc = new ColumnOrSuperColumn();
 		SuperColumn sc = new SuperColumn();
@@ -65,37 +66,36 @@ public class CassandraImpl implements ICassandra {
 		sc.columns = columns;
 		cosc.super_column = sc;
 		m.setColumn_or_supercolumn(cosc);
-		columnsToAdd.add(m);
-		innerMap.put(columnFamily, columnsToAdd);
-		outerMap.put(ByteBuffer.wrap(rowKey.getBytes()), innerMap);
-		getClientConect().batch_mutate(outerMap, CL_1);
+		mutationList.add(m);
+		mutationMapInner.put(columnFamily, mutationList);
+		mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
+		getClientConect().batch_mutate(mutationMapOuter, CL_1);
 		getClientClose();
 	}
 	
 	@Override
 	public void insertSuperColumns(String columnFamily, String rowKey, String superColumn, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		Map<ByteBuffer, Map<String, List<Mutation>>> outerMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
-		List<Mutation> columnsToAdd = new ArrayList<Mutation>();
-		Map<String, List<Mutation>> innerMap = new HashMap<String, List<Mutation>>();
-		Mutation m = new Mutation();
+		Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
+		Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
+		List<Mutation> mutationList = new ArrayList<Mutation>();
+		Mutation mutation = new Mutation();
 		ColumnOrSuperColumn cosc = new ColumnOrSuperColumn();
 		SuperColumn sc = new SuperColumn();
 		sc.name = ByteBuffer.wrap(superColumn.getBytes());
 		sc.columns = columns;
 		cosc.super_column = sc;
-		m.setColumn_or_supercolumn(cosc);
-		columnsToAdd.add(m);
-		innerMap.put(columnFamily, columnsToAdd);
-		outerMap.put(ByteBuffer.wrap(rowKey.getBytes()), innerMap);
-		getClientConect().batch_mutate(outerMap, CL_1);
+		mutation.setColumn_or_supercolumn(cosc);
+		mutationList.add(mutation);
+		mutationMapInner.put(columnFamily, mutationList);
+		mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
+		getClientConect().batch_mutate(mutationMapOuter, CL_1);
 		getClientClose();
 	}
 	
 	@Override
 	public void insertColumn(String columnFamily, String rowKey, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
 		ColumnParent parent = new ColumnParent(columnFamily);
-        ByteBuffer rowId = ByteBuffer.wrap(rowKey.getBytes());
-        getClientConect().insert(rowId, parent, column, CL_1);
+        getClientConect().insert(ByteBuffer.wrap(rowKey.getBytes()), parent, column, CL_1);
         getClientClose();
 	}
 
@@ -247,78 +247,32 @@ public class CassandraImpl implements ICassandra {
 	@Override
 	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
 		Clock clock = new Clock(System.nanoTime());
-		Map<ByteBuffer, Map<String, List<Mutation>>> outerMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
-		Map<String, List<Mutation>> innerMap = new HashMap<String, List<Mutation>>();
-		List<Mutation> columnsToAdd = new ArrayList<Mutation>();
+		Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
+		Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
+		List<Mutation> mutationList = new ArrayList<Mutation>();
 		Mutation mutation = new Mutation();
 		Deletion deletion = new Deletion();
 		deletion.setSuper_column(superColumn.getBytes());
 		deletion.setTimestamp(clock.timestamp);
 		mutation.setDeletion(deletion);
-		columnsToAdd.add(mutation);
-		innerMap.put(columnFamily, columnsToAdd);
-		outerMap.put(ByteBuffer.wrap(rowKey.getBytes()), innerMap);
-		getClientConect().batch_mutate(outerMap, CL_1);
+		mutationList.add(mutation);
+		mutationMapInner.put(columnFamily, mutationList);
+		mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
+		getClientConect().batch_mutate(mutationMapOuter, CL_1);
 		getClientClose();
 	}
 
-	@Override// TODO: need tweaking
-	public void removeColumn(String columnFamily, String rowKey, String column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		Clock clock = new Clock(System.currentTimeMillis());
-		ColumnPath colPath = new ColumnPath();
-		colPath.column_family = columnFamily;
-		colPath.column = ByteBuffer.wrap(column.getBytes());
-		getClientConect().remove(ByteBuffer.wrap(rowKey.getBytes()), colPath, clock.timestamp, CL_1);
+	@Override
+	public void removeColumn(String columnFamily, String rowKey) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+		StringBuilder cql=new StringBuilder();
+		cql.append("delete ");
+		cql.append(" from ");
+		cql.append(columnFamily);
+		cql.append(" where KEY = '");
+		cql.append(rowKey);
+		cql.append("'");
+		String query = cql.toString();
+		getClientConect().execute_cql_query(ByteBuffer.wrap(query.getBytes()), Compression.NONE);
 		getClientClose();
-		
-		/*
-		SlicePredicate delPred = new SlicePredicate();
-		List<ByteBuffer> delCols = new ArrayList<ByteBuffer>();
-		//let's delete the column named 'b', though we could add more
-		delCols.add(ByteBuffer.wrap(column.getBytes()));
-		delPred.column_names = delCols;
-		Deletion deletion = new Deletion();
-		deletion.predicate = delPred;
-		deletion.setTimestamp(clock.timestamp);
-		Mutation mutation = new Mutation();
-		mutation.deletion = deletion;
-		Map<ByteBuffer, Map<String, List<Mutation>>> mutationMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
-		List<Mutation> mutationList = new ArrayList<Mutation>();
-		mutationList.add(mutation);
-		Map<String, List<Mutation>> m = new HashMap<String, List<Mutation>>();
-		m.put(columnFamily, mutationList);
-		//just for this row key, though we could add more
-		mutationMap.put(ByteBuffer.wrap(rowKey.getBytes()), m);
-		getClientConect().batch_mutate(mutationMap, CL_1);
-		getClientClose();
-		*/
-		/*
-	 	SlicePredicate predicate = getSlicePredicate(new byte[0], new byte[0], false, sliceRangeCount);
-		
-		Clock clock = new Clock(System.nanoTime());
-		Map<ByteBuffer, Map<String, List<Mutation>>> outerMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
-		Map<String, List<Mutation>> innerMap = new HashMap<String, List<Mutation>>();
-		List<Mutation> columnsToAdd = new ArrayList<Mutation>();
-		Mutation mutation = new Mutation();
-		Deletion deletion = new Deletion();
-		deletion.setSuper_column(superColumnName.getBytes());
-		SlicePredicate predicate = new SlicePredicate();
-		SliceRange sliceRange = new SliceRange();
-		sliceRange.setStart(columnName.getBytes());
-		sliceRange.setFinish(columnName.getBytes());
-		sliceRange.setReversed(false);
-		if (count > 0) {
-			sliceRange.setCount(count);
-		}
-		predicate.setSlice_range(sliceRange);
-		deletion.setPredicate(predicate);
-		deletion.setTimestamp(clock.timestamp);
-		mutation.setDeletion(deletion);
-		columnsToAdd.add(mutation);
-		innerMap.put(columnFamily, columnsToAdd);
-		outerMap.put(ByteBuffer.wrap(rowKey.getBytes()), innerMap);
-		getClientConect().batch_mutate(outerMap, CL_1);
-		getClientClose();
-		*/
 	}
 }
