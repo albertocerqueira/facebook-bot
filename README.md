@@ -1,15 +1,15 @@
 ### Facebook Bot
 <sub>facebook data mining with cassandra nosql</sub>
 
-### facebook bot running
+### <sub>facebook bot running</sub>
 - <sub>Performing random searches on facebook to store posts</sub>  
 - <sub>Check which stored posting has more popularity</sub>
 - <sub>positioning the most popular posting for faster and objective search</sub>
 
-### technologies
+### <sub>technologies</sub>
 - <sub>JAVA</sub>
-- <sub>Gradle</sub>
-- <sub>DB Cassandra</sub>
+- [<sub>Gradle</sub>](https://gradle.org/ "Gradle")
+- [<sub>DB Cassandra</sub>](http://www.datastax.com/download "DB Cassandra")
 - [<sub>Thrift API</sub>](https://thrift.apache.org/ "Thrift API") <sub>for connect to DB Cassandra</sub>
 - <sub>JUnit</sub>
 
