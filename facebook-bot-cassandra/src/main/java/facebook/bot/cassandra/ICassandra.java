@@ -13,19 +13,12 @@ import org.apache.cassandra.thrift.UnavailableException;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
 
-public interface IFinder {
+public interface ICassandra {
 
-	/**
-	 * @throws InvalidRequestException chamada de metodos invalido.
-	 * @throws UnavailableException servlet não está ativo.
-	 * @throws TimedOutException tempo de bloqueo na acao excedido.
-	 * @throws TException erro generico do Thrift. Pode ser de qualquer tipo.
-	 * @throws UnsupportedEncodingException caracteres invalidos dentro da column.
-	 * @throws TTransportException possivel erro de conexao no DB Cassandra, ou 
-	 * seja o banco de dados estar com Status: Stop.
-	 */
-	
-	
+	public void insertSuperColumn(String columnFamily, String rowKey, String superColumn, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
+	public void insertSuperColumns(String columnFamily, String rowKey, String superColumn, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
+	public void insertColumn(String columnFamily, String rowKey, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
+	public void insertColumns(String columnFamily, String rowKey, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
 	
 	public Integer countColumnsInSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException, TTransportException;
 	public Column findColumn(String columnFamily, String rowKey, String column) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
@@ -34,4 +27,12 @@ public interface IFinder {
 	public SuperColumn findSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
 	public List<SuperColumn> findSuperColumns(String columnFamily, String rowKey, String...superColumns) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
 	public List<ColumnOrSuperColumn> findColumnOrSuperColumn(String columnFamily, String rowKey) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
+	
+	// TODO: need tweaking
+	/**
+	 * Need config time gc_grace_seconds on cassandra-cli for to remove marked for deletion
+	 */
+	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
+	// TODO: need tweaking
+	public void removeColumnSuperColumn(String columnFamily, String rowKey, String superColumnName, String columnName, Integer count) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
 }

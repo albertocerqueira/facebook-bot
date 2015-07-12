@@ -6,10 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import facebook4j.Comment;
 import facebook4j.FacebookException;
 import facebook4j.Group;
-import facebook4j.PagableList;
 import facebook4j.Post;
 import facebook4j.ResponseList;
 
@@ -31,7 +29,7 @@ public class TSearch extends Thread {
             	if (words.size() > 0) {
             		String word = getWord();
             		searchGroups(word);
-            		searchPosts(word);
+            		//searchPosts(word);// TODO: check problem (#11 - Post search has been deprecated)
             	} else {
             		logger.info("there no are words for verification");
             	}
@@ -71,7 +69,7 @@ public class TSearch extends Thread {
 	
 	public void searchGroups(String word) {
 		try {
-			ResponseList<Group> groups = AppFacebook.getFacebook().searchGroups(word);
+			ResponseList<Group> groups = Facebook.getFacebook().searchGroups(word);
 			for (Group group : groups) {
 				TGroup.addGroupId(group.getId());
 			}
@@ -82,15 +80,18 @@ public class TSearch extends Thread {
 	
 	public void searchPosts(String word) {
 		try {
-			ResponseList<Post> posts = AppFacebook.getFacebook().searchPosts(word);
+			ResponseList<Post> posts = Facebook.getFacebook().searchPosts(word);
 			for (Post post : posts) {
+				Cassandra.insertPost(post, "post-group");
+				/*
 				String postId = post.getId();
 				TUser.addUserId(post.getFrom().getId());// Mais um usuario para minerar informacao
 				PagableList<Comment> comments = post.getComments();
 				for (Comment comment : comments) {
 					TUser.addUserId(comment.getFrom().getId());// Mais um usuario para minerar informacao
-					FacebookComments.postLikeCount(postId, comment);
+					//FacebookComments.postLikeCount(postId, comment);
 				}
+				*/
 			}
 		} catch (FacebookException e) {
 			logger.error("[Error Code: " + e.getErrorCode() + "] - [Error: " + e.getErrorMessage() + "]", e);

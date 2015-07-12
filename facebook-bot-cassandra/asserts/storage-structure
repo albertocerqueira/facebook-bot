@@ -3,14 +3,9 @@ Storage Structure:
 keyspace column-family['row-key']['super-column']['column'] = 'value';
 keyspace column-family['row-key']['column'] = 'value';
 
-Facebook: Comments more likes (like count):
-Super Column - facebook_comment_like_count[comment-id][post-id][user-id] = 'like-count';
 
-Facebook: Most popular users post (like count / comment count):
-Super Column - facebook_post_user_popular[post-id][user-id][comments-count] = 'like-count';
+Facebook: post (like count / comment count):
+Super Column - facebook_post[type-post][post-id + user-id + user-name][comments-count + like-count] = 'some text...';
 
-Facebook: Page post (like count / comment count):
-Super Column - facebook_post_page[post-id][page-id][comments-count] = 'like-count';
-
-Facebook: Most popular page post (like count / comment count):
-Column - facebook_post_page_popular[type-post + ranking-position][[post-id + user-id + user-name] = 'some text...';
+Facebook: most popular post (like count / comment count):
+Column - facebook_post_popular[type-post + ranking-position][post-id + user-id + user-name] = 'some text...';

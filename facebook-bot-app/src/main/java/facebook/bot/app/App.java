@@ -16,16 +16,20 @@ public class App {
 		TSearch tSearch = new TSearch(Process.in3Seconds.getTime());
 		tSearch.start();
 		
+		tSearch.addWord("palmeiras");
+		
 		new Thread().sleep(Process.in1Second.getTime());
 		
 		logger.info("starting thread TGroup");
 		TGroup tGroup = new TGroup(Process.in3Seconds.getTime());
 		tGroup.start();
 		
+		/*
 		new Thread().sleep(Process.in1Second.getTime());
 		
 		logger.info("starting thread TUser");
 		TUser tUser = new TUser(Process.in3Seconds.getTime());
 		tUser.start();
+		*/
 	}
 }

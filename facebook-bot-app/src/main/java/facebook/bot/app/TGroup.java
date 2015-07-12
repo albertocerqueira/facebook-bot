@@ -6,9 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import facebook4j.Comment;
 import facebook4j.FacebookException;
-import facebook4j.PagableList;
 import facebook4j.Post;
 import facebook4j.ResponseList;
 
@@ -69,15 +67,18 @@ public class TGroup extends Thread {
 	
 	public void checkFeed(String groupId) {
 		try {
-			ResponseList<Post> posts = AppFacebook.getFacebook().getGroupFeed(groupId);
+			ResponseList<Post> posts = Facebook.getFacebook().getGroupFeed(groupId);
 			for (Post post : posts) {
+				Cassandra.insertPost(post, "post-group");
+				/*
 				String postId = post.getId();
 				TUser.addUserId(post.getFrom().getId());// Mais um usuario para minerar informacao
 				PagableList<Comment> comments = post.getComments();
 				for (Comment comment : comments) {
 					TUser.addUserId(comment.getFrom().getId());// Mais um usuario para minerar informacao
-					FacebookComments.postLikeCount(postId, comment);
+					//FacebookComments.postLikeCount(postId, comment);
 				}
+				*/
 			}
 		} catch (FacebookException e) {
 			logger.error("[Error Code: " + e.getErrorCode() + "] - [Error: " + e.getErrorMessage() + "]", e);
