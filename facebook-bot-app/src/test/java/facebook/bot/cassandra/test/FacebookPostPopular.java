@@ -1,8 +1,10 @@
 package facebook.bot.cassandra.test;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Random;
 
+import org.apache.cassandra.thrift.ColumnOrSuperColumn;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +19,7 @@ public class FacebookPostPopular {
 	
 	private String type = "test-post";
 	
-	@Test
+	//@Test
 	public void insert_facebook_post_popular() throws UnsupportedEncodingException {
 		Random r = new Random();
 		for (int x = 0; x < 1000; x++) {
@@ -35,6 +37,31 @@ public class FacebookPostPopular {
 			Cassandra.insertPostPopular(post, type, x);
 			
 			logger.info("Insert data in facebook_post_popular [" + (x + 1) + "].");
+		}
+	}
+	
+	@Test//TODO: It does not work
+	public void remove_facebook_post_popular() {
+		for (int x = 0; x < 1000; x++) {
+			ColumnOrSuperColumn csc = Cassandra.getPostPopular(type, x);
+			
+			PostImpl post = new PostImpl();
+			
+			String[] column = Cassandra.createString(csc.column.getName()).split("-");
+			String postId = column[0];
+			String userId = column[1];
+			String userName = column[2];
+			
+			IdNameEntityImpl from = new IdNameEntityImpl();
+			from.setId(userId);
+			from.setName(userName);
+
+			post.setId(postId);
+			post.setFrom(from);
+			
+			Cassandra.removePostPopular(post, type, x);
+			
+			logger.info("Remove data in facebook_post_popular [" + Cassandra.createString(csc.column.getName()) + "]");
 		}
 	}
 }

@@ -6,7 +6,8 @@ CREATE KEYSPACE social with placement_strategy = 'org.apache.cassandra.locator.S
 
 --create super column
 CREATE COLUMN FAMILY facebook_post WITH column_type = 'Super' AND default_validation_class = 'UTF8Type' AND comparator = 'UTF8Type' AND subcomparator = 'UTF8Type' AND key_validation_class = 'UTF8Type';
-UPDATE COLUMN FAMILY facebook_post WITH GC_GRACE = 10; // 10 seconds
+UPDATE COLUMN FAMILY facebook_post WITH GC_GRACE = 0; // 0 seconds
 
 --create column
 CREATE COLUMN FAMILY facebook_post_popular WITH comparator = UTF8Type AND key_validation_class = UTF8Type AND column_metadata = [{column_name: post_id_user_id_user_name, validation_class: UTF8Type}];
+UPDATE COLUMN FAMILY facebook_post_popular WITH GC_GRACE = 0; // 0 seconds

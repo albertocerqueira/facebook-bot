@@ -27,7 +27,7 @@ public class Bot {
 		Set<Integer> rankingPosition = new TreeSet<Integer>();
 		
 		int smaller = 0, popular = 0, amount = Bot.amount;
-		List<ColumnOrSuperColumn> cscs = Cassandra.getPostsPages(type);
+		List<ColumnOrSuperColumn> cscs = Cassandra.getPost(type);
 		for (ColumnOrSuperColumn csc : cscs) {
 			PostImpl post = new PostImpl();
 			
@@ -95,6 +95,8 @@ public class Bot {
 			if ((smaller == 0 || smaller > popularity) && isPopular) {// lower among popular
 				smaller = popularity;
 			}
+			
+			Cassandra.removePost(post, type);// I can remove, we will no longer use. This data can be found again
 		}
 		
 		int ranking = Bot.amount;
@@ -114,8 +116,5 @@ public class Bot {
 			}
 		}
 		logger.info(amount + " more popular posting stored in their positions");
-		
-		//String rowKey = "post-gorup";
-		//TODO: remove super column after 
 	}
 }

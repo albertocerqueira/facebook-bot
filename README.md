@@ -4,7 +4,7 @@
 ### <sub>facebook bot running</sub>
 - <sub>Performing random searches on facebook to store posts</sub>  
 - <sub>Check which stored posting has more popularity</sub>
-- <sub>positioning the most popular posting for faster and objective search</sub>
+- <sub>Positioning the most popular posting for faster and objective search</sub>
 
 ### <sub>technologies</sub>
 - <sub>JAVA</sub>

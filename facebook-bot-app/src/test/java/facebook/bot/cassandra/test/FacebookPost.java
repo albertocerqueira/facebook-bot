@@ -54,13 +54,13 @@ public class FacebookPost {
 			
 			Cassandra.insertPost(post, type);
 			
-			logger.info("Insert data in facebook_post [" + (x + 1) + "]");
+			logger.info("insert data in facebook_post [" + (x + 1) + "]");
 		}
 	}
 	
-	//@Test//TODO: It does not work
+	@Test
 	public void remove_facebook_post() {
-		List<ColumnOrSuperColumn> cscs = Cassandra.getPostsPages(type);
+		List<ColumnOrSuperColumn> cscs = Cassandra.getPost(type);
 		for (ColumnOrSuperColumn csc : cscs) {
 			PostImpl post = new PostImpl();
 			
@@ -76,13 +76,9 @@ public class FacebookPost {
 			post.setId(postId);
 			post.setFrom(from);
 			
-			String[] column = Cassandra.createString(csc.super_column.columns.get(0).getName()).split("-");
-			String commentsCount = column[0];
-			String likeCount = column[1];
-			
 			Cassandra.removePost(post, type);
 			
-			logger.info("Remove data in facebook_post [" + Cassandra.createString(csc.super_column.getName()) + "]");
+			logger.info("remove data in facebook_post [" + Cassandra.createString(csc.super_column.getName()) + "]");
 		}
 	}
 }

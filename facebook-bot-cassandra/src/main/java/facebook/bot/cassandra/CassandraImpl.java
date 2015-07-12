@@ -34,6 +34,7 @@ public class CassandraImpl implements ICassandra {
 
 	final static Logger logger = LoggerFactory.getLogger(CassandraImpl.class);
 	private static Connector connector = null;
+	private static Integer sliceRangeCount = 999999999;
 
 	private static Connector getConnector() {
 		if (connector == null) {
@@ -115,7 +116,7 @@ public class CassandraImpl implements ICassandra {
 		sliceRange.setFinish(finish);
 		sliceRange.setReversed(reversed);
 		if (count > 0) {
-			sliceRange.setCount(count);
+			sliceRange.setCount(sliceRangeCount);
 		}
 		predicate.setSlice_range(sliceRange);
 		return predicate;
@@ -228,7 +229,7 @@ public class CassandraImpl implements ICassandra {
 	
 	@Override
 	public List<ColumnOrSuperColumn> findColumnOrSuperColumn(String columnFamily, String rowKey) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		SlicePredicate predicate = getSlicePredicate(new byte[0], new byte[0], false, 0);
+		SlicePredicate predicate = getSlicePredicate(new byte[0], new byte[0], false, sliceRangeCount);
 		ColumnParent parent = new ColumnParent(columnFamily);
 		KeyRange keyRange = getKeyRange(rowKey, 1);
 		try {
@@ -243,7 +244,7 @@ public class CassandraImpl implements ICassandra {
 		}
 	}
 	
-	@Override// TODO: need tweaking
+	@Override
 	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
 		Clock clock = new Clock(System.nanoTime());
 		Map<ByteBuffer, Map<String, List<Mutation>>> outerMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
@@ -260,44 +261,40 @@ public class CassandraImpl implements ICassandra {
 		getClientConect().batch_mutate(outerMap, CL_1);
 		getClientClose();
 	}
-	
-	//@Override// TODO: need tweaking
-	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn, String column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		Clock clock = new Clock(System.nanoTime());
-        ColumnPath path = new ColumnPath();
-		path.column_family = columnFamily;
-		path.super_column = ByteBuffer.wrap(superColumn.getBytes());
-		path.column = ByteBuffer.wrap(column.getBytes());
-        getClientConect().send_remove(ByteBuffer.wrap(rowKey.getBytes()), path, clock.timestamp, CL_1);
-        getClientClose();
-        
-        removeSuperColumn(columnFamily, rowKey, superColumn);
-        removeSuperColumn(columnFamily, rowKey, superColumn, column, null);
-		
-	}
-	
-	//TODO: need tweaking
-	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn, String column, Long a) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		List<Mutation> mutations = new ArrayList<Mutation>();
-		Map<String, List<Mutation>> keyMutations = new HashMap<String, List<Mutation>>();
-		Map<ByteBuffer, Map<String, List<Mutation>>> mutationsMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
-		Deletion deletion = new Deletion();
-	    SlicePredicate slicePredicate = new SlicePredicate();
-	    List<ByteBuffer> columns = new ArrayList<ByteBuffer>();
-	    columns.add(ByteBuffer.wrap(superColumn.getBytes()));
-	    slicePredicate.setColumn_names(columns);
-	    deletion.setPredicate(slicePredicate);
-	    deletion.setTimestamp(System.currentTimeMillis() * 1000);
-	    Mutation m = new Mutation();
-	    m.setDeletion(deletion);
-	    mutations.add(m);
-	    keyMutations.put("column_family_name", mutations);
-	    mutationsMap.put(ByteBuffer.wrap(rowKey.getBytes()), keyMutations);
-		getClientClose();
-	}
 
 	@Override// TODO: need tweaking
-	public void removeColumnSuperColumn(String columnFamily, String rowKey, String superColumnName, String columnName, Integer count) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+	public void removeColumn(String columnFamily, String rowKey, String column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+		Clock clock = new Clock(System.currentTimeMillis());
+		ColumnPath colPath = new ColumnPath();
+		colPath.column_family = columnFamily;
+		colPath.column = ByteBuffer.wrap(column.getBytes());
+		getClientConect().remove(ByteBuffer.wrap(rowKey.getBytes()), colPath, clock.timestamp, CL_1);
+		getClientClose();
+		
+		/*
+		SlicePredicate delPred = new SlicePredicate();
+		List<ByteBuffer> delCols = new ArrayList<ByteBuffer>();
+		//let's delete the column named 'b', though we could add more
+		delCols.add(ByteBuffer.wrap(column.getBytes()));
+		delPred.column_names = delCols;
+		Deletion deletion = new Deletion();
+		deletion.predicate = delPred;
+		deletion.setTimestamp(clock.timestamp);
+		Mutation mutation = new Mutation();
+		mutation.deletion = deletion;
+		Map<ByteBuffer, Map<String, List<Mutation>>> mutationMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
+		List<Mutation> mutationList = new ArrayList<Mutation>();
+		mutationList.add(mutation);
+		Map<String, List<Mutation>> m = new HashMap<String, List<Mutation>>();
+		m.put(columnFamily, mutationList);
+		//just for this row key, though we could add more
+		mutationMap.put(ByteBuffer.wrap(rowKey.getBytes()), m);
+		getClientConect().batch_mutate(mutationMap, CL_1);
+		getClientClose();
+		*/
+		/*
+	 	SlicePredicate predicate = getSlicePredicate(new byte[0], new byte[0], false, sliceRangeCount);
+		
 		Clock clock = new Clock(System.nanoTime());
 		Map<ByteBuffer, Map<String, List<Mutation>>> outerMap = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
 		Map<String, List<Mutation>> innerMap = new HashMap<String, List<Mutation>>();
@@ -322,5 +319,6 @@ public class CassandraImpl implements ICassandra {
 		outerMap.put(ByteBuffer.wrap(rowKey.getBytes()), innerMap);
 		getClientConect().batch_mutate(outerMap, CL_1);
 		getClientClose();
+		*/
 	}
 }
