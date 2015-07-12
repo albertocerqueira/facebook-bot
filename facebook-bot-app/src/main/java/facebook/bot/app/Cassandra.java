@@ -78,18 +78,25 @@ public class Cassandra {
 		}
 	}
 	
-	public static void removePost(Post post, String type) {
+	public static void insertPostPopular(Post post, String type, Integer rankingPosition) {
 		try {
 			String postId = post.getId();
 			IdNameEntity idNameEntity = post.getFrom();
 			String userId = idNameEntity.getId();
 			String userName = idNameEntity.getName();
 			
-			String columnFamily = COLUMN_FAMILY_FACEBOOK_POST;
-			String rowKey = type;
-			String superColumn = postId + "-" + userId + "-" + userName;
+			String columnFamily = COLUMN_FAMILY_FACEBOOK_POST_POPULAR;
+			String rowKey = (type + "-" + rankingPosition);
 			
-			dao.removeSuperColumn(columnFamily, rowKey, superColumn);
+			Clock clock = new Clock(System.nanoTime());
+			Column column = new Column();
+			String columnName = (postId + "-" + userId + "-" + userName);
+			column.setName(columnName.getBytes(UTF8));
+			String columnValue = post.getMessage();
+			column.setValue(columnValue.getBytes(UTF8));
+			column.setTimestamp(clock.timestamp);
+			
+			dao.insertColumn(columnFamily, rowKey, column);
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
 			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
@@ -109,16 +116,18 @@ public class Cassandra {
 		}
 	}
 	
-	public static void insertPostPopular(String type, Integer rankingPosition, String postId, String userId, String userName, String someText) {
+	public static void removePost(Post post, String type) {
 		try {
-			Clock clock = new Clock(System.nanoTime());
-			Column column = new Column();
-			String post = (postId + "-" + userId + "-" + userName);
-			column.setName(post.getBytes(UTF8));
-			column.setValue(someText.getBytes(UTF8));
-			column.setTimestamp(clock.timestamp);
-			String rowKey = (type + "-" + rankingPosition);
-			dao.insertColumn(COLUMN_FAMILY_FACEBOOK_POST_POPULAR, rowKey, column);
+			String postId = post.getId();
+			IdNameEntity idNameEntity = post.getFrom();
+			String userId = idNameEntity.getId();
+			String userName = idNameEntity.getName();
+			
+			String columnFamily = COLUMN_FAMILY_FACEBOOK_POST;
+			String rowKey = type;
+			String superColumn = postId + "-" + userId + "-" + userName;
+			
+			dao.removeSuperColumn(columnFamily, rowKey, superColumn);
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
 			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);

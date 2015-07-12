@@ -24,4 +24,9 @@ public class IdNameEntityImpl implements IdNameEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public String toString() {
+		return "IdNameEntityImpl [id=" + id + ", name=" + name + "]";
+	}
 }

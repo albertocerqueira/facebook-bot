@@ -8,24 +8,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import facebook.bot.app.Cassandra;
+import facebook.bot.app.objects.IdNameEntityImpl;
+import facebook.bot.app.objects.PostImpl;
 
 public class FacebookPostPopular {
 
 	final static Logger logger = LoggerFactory.getLogger(FacebookPostPopular.class);
 	
+	private String type = "test-post";
+	
 	@Test
 	public void insert_facebook_post_popular() throws UnsupportedEncodingException {
-		Random random = new Random();
+		Random r = new Random();
 		for (int x = 0; x < 1000; x++) {
-			String postId = random.nextLong() + "";
-			String userId = random.nextLong() + "";
-			String userName = "Alberto Cerqueira";
-			String someText = "some text...";
-			String type = "Tecnology";
+			IdNameEntityImpl from = new IdNameEntityImpl();
+			long userId = r.nextLong();
+			from.setId((userId < 0 ? (userId * -1) : userId) + "");
+			from.setName("Alberto Cerqueira");
 			
-			Cassandra.insertPostPopular(type, x, postId, userId, userName, someText);
+			PostImpl post = new PostImpl();
+			long postId = r.nextLong();
+			post.setId((postId < 0 ? (postId * -1) : postId) + "");
+			post.setFrom(from);
+			post.setMessage("some text...");
 			
-			logger.info("Inserindo em facebook_post_popular registro [" + (x + 1) + "].");
+			Cassandra.insertPostPopular(post, type, x);
+			
+			logger.info("Insert data in facebook_post_popular [" + (x + 1) + "].");
 		}
 	}
 }

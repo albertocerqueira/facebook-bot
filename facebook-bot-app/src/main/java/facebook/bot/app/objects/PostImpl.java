@@ -23,6 +23,7 @@ public class PostImpl implements Post {
 	private PagableList<IdNameEntity> likes;
 	private PagableList<Comment> comments;
 	private Integer rankingPosition;// create for bot
+	private Integer popularity;// create for bot
 	
 	@Override
 	public Metadata getMetadata() {
@@ -189,5 +190,18 @@ public class PostImpl implements Post {
 
 	public void setRankingPosition(Integer rankingPosition) {
 		this.rankingPosition = rankingPosition;
+	}
+
+	public Integer getPopularity() {
+		return popularity;
+	}
+
+	public void setPopularity(Integer popularity) {
+		this.popularity = popularity;
+	}
+
+	@Override
+	public String toString() {
+		return "PostImpl [id=" + id + ", message=" + message + ", type=" + type + ", from=" + (from == null ? "null" : from.toString()) + ", likes=" + likes + ", comments=" + comments + ", rankingPosition=" + rankingPosition + ", popularity=" + popularity + "]";
 	}
 }

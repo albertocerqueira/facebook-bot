@@ -93,8 +93,8 @@ public class CassandraImpl implements ICassandra {
 	@Override
 	public void insertColumn(String columnFamily, String rowKey, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
 		ColumnParent parent = new ColumnParent(columnFamily);
-        ByteBuffer rowid = ByteBuffer.wrap(rowKey.getBytes());
-        getClientConect().insert(rowid, parent, column, CL_1);
+        ByteBuffer rowId = ByteBuffer.wrap(rowKey.getBytes());
+        getClientConect().insert(rowId, parent, column, CL_1);
         getClientClose();
 	}
 
