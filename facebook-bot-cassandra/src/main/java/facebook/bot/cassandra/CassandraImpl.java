@@ -53,60 +53,124 @@ public class CassandraImpl implements ICassandra {
 	}
 	
 	@Override
-	public void insertSuperColumn(String columnFamily, String rowKey, String superColumn, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
-		Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
-		List<Mutation> mutationList = new ArrayList<Mutation>();
-		Mutation m = new Mutation();
-		ColumnOrSuperColumn cosc = new ColumnOrSuperColumn();
-		SuperColumn sc = new SuperColumn();
-		sc.name = ByteBuffer.wrap(superColumn.getBytes());
-		List<Column> columns = new ArrayList<Column>();
-		columns.add(column);
-		sc.columns = columns;
-		cosc.super_column = sc;
-		m.setColumn_or_supercolumn(cosc);
-		mutationList.add(m);
-		mutationMapInner.put(columnFamily, mutationList);
-		mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
-		getClientConect().batch_mutate(mutationMapOuter, CL_1);
-		getClientClose();
+	public void insertSuperColumn(String columnFamily, String rowKey, String superColumn, Column column) {
+		try {
+			Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
+			Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
+			List<Mutation> mutationList = new ArrayList<Mutation>();
+			Mutation m = new Mutation();
+			ColumnOrSuperColumn cosc = new ColumnOrSuperColumn();
+			SuperColumn sc = new SuperColumn();
+			sc.name = ByteBuffer.wrap(superColumn.getBytes());
+			List<Column> columns = new ArrayList<Column>();
+			columns.add(column);
+			sc.columns = columns;
+			cosc.super_column = sc;
+			m.setColumn_or_supercolumn(cosc);
+			mutationList.add(m);
+			mutationMapInner.put(columnFamily, mutationList);
+			mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
+			getClientConect().batch_mutate(mutationMapOuter, CL_1);
+			getClientClose();
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");//TODO: check return stack with problems
+			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+		}
 	}
 	
 	@Override
-	public void insertSuperColumns(String columnFamily, String rowKey, String superColumn, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
-		Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
-		List<Mutation> mutationList = new ArrayList<Mutation>();
-		Mutation mutation = new Mutation();
-		ColumnOrSuperColumn cosc = new ColumnOrSuperColumn();
-		SuperColumn sc = new SuperColumn();
-		sc.name = ByteBuffer.wrap(superColumn.getBytes());
-		sc.columns = columns;
-		cosc.super_column = sc;
-		mutation.setColumn_or_supercolumn(cosc);
-		mutationList.add(mutation);
-		mutationMapInner.put(columnFamily, mutationList);
-		mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
-		getClientConect().batch_mutate(mutationMapOuter, CL_1);
-		getClientClose();
+	public void insertSuperColumns(String columnFamily, String rowKey, String superColumn, List<Column> columns) {
+		try {
+			Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
+			Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
+			List<Mutation> mutationList = new ArrayList<Mutation>();
+			Mutation mutation = new Mutation();
+			ColumnOrSuperColumn cosc = new ColumnOrSuperColumn();
+			SuperColumn sc = new SuperColumn();
+			sc.name = ByteBuffer.wrap(superColumn.getBytes());
+			sc.columns = columns;
+			cosc.super_column = sc;
+			mutation.setColumn_or_supercolumn(cosc);
+			mutationList.add(mutation);
+			mutationMapInner.put(columnFamily, mutationList);
+			mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
+			getClientConect().batch_mutate(mutationMapOuter, CL_1);
+			getClientClose();
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");//TODO: check return stack with problems
+			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+		}
 	}
 	
 	@Override
-	public void insertColumn(String columnFamily, String rowKey, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		ColumnParent parent = new ColumnParent(columnFamily);
-        getClientConect().insert(ByteBuffer.wrap(rowKey.getBytes()), parent, column, CL_1);
-        getClientClose();
+	public void insertColumn(String columnFamily, String rowKey, Column column) {
+		try {
+			ColumnParent parent = new ColumnParent(columnFamily);
+	        getClientConect().insert(ByteBuffer.wrap(rowKey.getBytes()), parent, column, CL_1);
+	        getClientClose();
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+		}
 	}
 
 	@Override
-	public void insertColumns(String columnFamily, String rowKey, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		ColumnParent parent = new ColumnParent(columnFamily);
-        ByteBuffer rowid = ByteBuffer.wrap(rowKey.getBytes());
-        for (Column column : columns) {
-        	getClientConect().insert(rowid, parent, column, CL_1);
+	public void insertColumns(String columnFamily, String rowKey, List<Column> columns) {
+		try {
+			ColumnParent parent = new ColumnParent(columnFamily);
+	        ByteBuffer rowid = ByteBuffer.wrap(rowKey.getBytes());
+	        for (Column column : columns) {
+	        	getClientConect().insert(rowid, parent, column, CL_1);
+			}
+	        getClientClose();
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");//TODO: check return stack with problems
+			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
 		}
-        getClientClose();
 	}
 	
 	private SlicePredicate getSlicePredicate(byte[] start, byte[] finish, boolean reversed, int count) {
@@ -245,34 +309,68 @@ public class CassandraImpl implements ICassandra {
 	}
 	
 	@Override
-	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		Clock clock = new Clock(System.nanoTime());
-		Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
-		Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
-		List<Mutation> mutationList = new ArrayList<Mutation>();
-		Mutation mutation = new Mutation();
-		Deletion deletion = new Deletion();
-		deletion.setSuper_column(superColumn.getBytes());
-		deletion.setTimestamp(clock.timestamp);
-		mutation.setDeletion(deletion);
-		mutationList.add(mutation);
-		mutationMapInner.put(columnFamily, mutationList);
-		mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
-		getClientConect().batch_mutate(mutationMapOuter, CL_1);
-		getClientClose();
+	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn) {
+		try {
+			Clock clock = new Clock(System.nanoTime());
+			Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
+			Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
+			List<Mutation> mutationList = new ArrayList<Mutation>();
+			Mutation mutation = new Mutation();
+			Deletion deletion = new Deletion();
+			deletion.setSuper_column(superColumn.getBytes());
+			deletion.setTimestamp(clock.timestamp);
+			mutation.setDeletion(deletion);
+			mutationList.add(mutation);
+			mutationMapInner.put(columnFamily, mutationList);
+			mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
+			getClientConect().batch_mutate(mutationMapOuter, CL_1);
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");//TODO: check return stack with problems
+			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+		} finally {
+			getClientClose();
+		}
 	}
 
 	@Override
-	public void removeColumn(String columnFamily, String rowKey) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
-		StringBuilder cql=new StringBuilder();
-		cql.append("delete ");
-		cql.append(" from ");
-		cql.append(columnFamily);
-		cql.append(" where KEY = '");
-		cql.append(rowKey);
-		cql.append("'");
-		String query = cql.toString();
-		getClientConect().execute_cql_query(ByteBuffer.wrap(query.getBytes()), Compression.NONE);
-		getClientClose();
+	public void removeColumn(String columnFamily, String rowKey) {
+		try {
+			StringBuilder cql = new StringBuilder();
+			cql.append("delete ");
+			cql.append(" from ");
+			cql.append(columnFamily);
+			cql.append(" where KEY = '");
+			cql.append(rowKey);
+			cql.append("'");
+			String query = cql.toString();
+			getClientConect().execute_cql_query(ByteBuffer.wrap(query.getBytes()), Compression.NONE);
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");//TODO: check return stack with problems
+			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+		} finally {
+			getClientClose();
+		}
 	}
 }

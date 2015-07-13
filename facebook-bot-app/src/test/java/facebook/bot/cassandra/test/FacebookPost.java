@@ -58,7 +58,7 @@ public class FacebookPost {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void remove_facebook_post() {
 		List<ColumnOrSuperColumn> cscs = Cassandra.getPost(type);
 		for (ColumnOrSuperColumn csc : cscs) {

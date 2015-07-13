@@ -17,18 +17,19 @@ public interface ICassandra {
 
 	// TODO: add javadoc
 	
-	public void insertSuperColumn(String columnFamily, String rowKey, String superColumn, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
-	public void insertSuperColumns(String columnFamily, String rowKey, String superColumn, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
+	public void insertSuperColumn(String columnFamily, String rowKey, String superColumn, Column column);
+	public void insertSuperColumns(String columnFamily, String rowKey, String superColumn, List<Column> columns);
 	/**
 	 * Need config time gc_grace_seconds on cassandra-cli for to remove marked for deletion
 	 */
-	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
+	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn);
+
+	public void insertColumn(String columnFamily, String rowKey, Column column);
+	public void insertColumns(String columnFamily, String rowKey, List<Column> columns);
 	/**
 	 * Need config time gc_grace_seconds on cassandra-cli for to remove marked for deletion
 	 */
-	public void removeColumn(String columnFamily, String rowKey) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
-	public void insertColumn(String columnFamily, String rowKey, Column column) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
-	public void insertColumns(String columnFamily, String rowKey, List<Column> columns) throws InvalidRequestException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
+	public void removeColumn(String columnFamily, String rowKey);
 	
 	public Integer countColumnsInSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException, TTransportException;
 	public Column findColumn(String columnFamily, String rowKey, String column) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;

@@ -23,6 +23,7 @@ public class Bot {
 	}
 	
 	private void insertPostPopular(String type) {
+		logger.info("starting scan misread the post " + type + " type");
 		List<PostImpl> popularPosts = new ArrayList<PostImpl>();// TODO: check interface Post
 		Set<Integer> rankingPosition = new TreeSet<Integer>();
 		
@@ -107,7 +108,7 @@ public class Bot {
 				if (popularity == rp) {
 					logger.info("posting the position " + ranking + "° " + post.toString());
 
-					Cassandra.insertPostPopular(post, type, ranking);
+					Cassandra.updatePostPopular(post, type, ranking);
 
 					ranking--;
 					popularPosts.remove(x);
