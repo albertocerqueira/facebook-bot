@@ -41,7 +41,7 @@ public class ColumnTest {
 		}
 	}
 	
-	//@Test
+	@Test
 	public void remove_columns() {
 		for (int x = 0; x < 5; x++) {
 			int p = (x + 1);

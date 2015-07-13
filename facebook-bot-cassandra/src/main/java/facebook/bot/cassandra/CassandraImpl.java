@@ -74,18 +74,18 @@ public class CassandraImpl implements ICassandra {
 			getClientClose();
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
 		} catch (InvalidRequestException e) {
-			logger.info("unusual exception occurred");//TODO: check return stack with problems
-			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
 		} catch (UnavailableException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
 		} catch (TimedOutException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
 		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		}
 	}
 	
@@ -109,18 +109,18 @@ public class CassandraImpl implements ICassandra {
 			getClientClose();
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
 		} catch (InvalidRequestException e) {
-			logger.info("unusual exception occurred");//TODO: check return stack with problems
-			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
 		} catch (UnavailableException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
 		} catch (TimedOutException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
 		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		}
 	}
 	
@@ -132,18 +132,18 @@ public class CassandraImpl implements ICassandra {
 	        getClientClose();
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
 		} catch (InvalidRequestException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
 		} catch (UnavailableException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
 		} catch (TimedOutException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
 		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		}
 	}
 
@@ -158,18 +158,18 @@ public class CassandraImpl implements ICassandra {
 	        getClientClose();
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
 		} catch (InvalidRequestException e) {
-			logger.info("unusual exception occurred");//TODO: check return stack with problems
-			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
 		} catch (UnavailableException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
 		} catch (TimedOutException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
 		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		}
 	}
 	
@@ -247,7 +247,7 @@ public class CassandraImpl implements ICassandra {
 					ColumnOrSuperColumn sc = client.get(ByteBuffer.wrap(rowKey.getBytes()), path, CL_1);
 					cs.add(sc.column);
 				} catch (NotFoundException e) {
-					logger.error("[Info: data not found] - [Column Family: " + columnFamily + "] - [Column: " + column + "] - [Error: " + e.getMessage() + "]", e);
+					logger.error("[Info: data not found] - [Column Family: " + columnFamily + "] - [Column: " + column + "] - [Error: " + e.toString() + "]", e);
 				}
 			}
 		} finally {
@@ -282,7 +282,7 @@ public class CassandraImpl implements ICassandra {
 					ColumnOrSuperColumn sc = client.get(ByteBuffer.wrap(rowKey.getBytes()), path, CL_1);
 					scs.add(sc.super_column);
 				} catch (NotFoundException e) {
-					logger.error("[Info: data not found] - [Column Family: " + columnFamily + "] - [Super Column: " + superColumn + "] - [Error: " + e.getMessage() + "]", e);
+					logger.error("[Info: data not found] - [Column Family: " + columnFamily + "] - [Super Column: " + superColumn + "] - [Error: " + e.toString() + "]", e);
 				}
 			}
 		} finally {
@@ -326,18 +326,18 @@ public class CassandraImpl implements ICassandra {
 			getClientConect().batch_mutate(mutationMapOuter, CL_1);
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
 		} catch (InvalidRequestException e) {
-			logger.info("unusual exception occurred");//TODO: check return stack with problems
-			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
 		} catch (UnavailableException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
 		} catch (TimedOutException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
 		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} finally {
 			getClientClose();
 		}
@@ -357,18 +357,18 @@ public class CassandraImpl implements ICassandra {
 			getClientConect().execute_cql_query(ByteBuffer.wrap(query.getBytes()), Compression.NONE);
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
 		} catch (InvalidRequestException e) {
-			logger.info("unusual exception occurred");//TODO: check return stack with problems
-			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
 		} catch (UnavailableException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
 		} catch (TimedOutException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
 		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} finally {
 			getClientClose();
 		}

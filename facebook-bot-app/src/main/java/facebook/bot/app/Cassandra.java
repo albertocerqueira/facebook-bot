@@ -34,7 +34,7 @@ public class Cassandra {
 		try {
 			return (new String(bytes, UTF8));
 		} catch (UnsupportedEncodingException e) {
-			logger.error("[Info: encoding invalid] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: encoding invalid] - [Error: " + e.toString() + "]", e);
 			return "erro [encoding invalid]";
 		}
 	}
@@ -62,7 +62,7 @@ public class Cassandra {
 			
 			cassandra.insertSuperColumn(columnFamily, rowKey, superColumn, column);
 		} catch (UnsupportedEncodingException e) {
-			logger.error("[Info: encoding invalid] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: encoding invalid] - [Error: " + e.toString() + "]", e);
 		}
 	}
 	
@@ -86,7 +86,7 @@ public class Cassandra {
 			
 			cassandra.insertColumn(columnFamily, rowKey, column);
 		} catch (UnsupportedEncodingException e) {
-			logger.error("[Info: encoding invalid] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: encoding invalid] - [Error: " + e.toString() + "]", e);
 		}
 	}
 	
@@ -122,20 +122,20 @@ public class Cassandra {
 			return cassandra.findColumnOrSuperColumn(COLUMN_FAMILY_FACEBOOK_POST, type);
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
 		} catch (InvalidRequestException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
 		} catch (UnavailableException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
 		} catch (TimedOutException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
 		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} catch (UnsupportedEncodingException e) {
-			logger.error("[Info: encoding invalid] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: encoding invalid] - [Error: " + e.toString() + "]", e);
 		}
 		return null;
 	}
@@ -147,20 +147,20 @@ public class Cassandra {
 			return cscs.get(0);
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
 		} catch (InvalidRequestException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: access to invalid method] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
 		} catch (UnavailableException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
 		} catch (TimedOutException e) {
 			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
 		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} catch (UnsupportedEncodingException e) {
-			logger.error("[Info: encoding invalid] - [Error: " + e.getMessage() + "]", e);
+			logger.error("[Info: encoding invalid] - [Error: " + e.toString() + "]", e);
 		}
 		return null;
 	}
