@@ -4,6 +4,15 @@
 --create keyspace
 CREATE KEYSPACE social with placement_strategy = 'org.apache.cassandra.locator.SimpleStrategy' and strategy_options = {replication_factor:1};
 
+--drop column family
+drop column family cf_test_simple;
+drop column family facebook_post;
+drop column family facebook_post_popular;
+
+--create column for test
+CREATE COLUMN FAMILY cf_test_simple WITH comparator = UTF8Type AND key_validation_class = UTF8Type AND column_metadata = [{column_name: post_id_user_id_user_name, validation_class: UTF8Type}];
+UPDATE COLUMN FAMILY cf_test_simple WITH GC_GRACE = 0; // 0 seconds
+
 --create super column
 CREATE COLUMN FAMILY facebook_post WITH column_type = 'Super' AND default_validation_class = 'UTF8Type' AND comparator = 'UTF8Type' AND subcomparator = 'UTF8Type' AND key_validation_class = 'UTF8Type';
 UPDATE COLUMN FAMILY facebook_post WITH GC_GRACE = 0; // 0 seconds
