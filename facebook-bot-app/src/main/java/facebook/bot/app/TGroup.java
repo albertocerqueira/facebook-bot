@@ -15,6 +15,7 @@ public class TGroup extends Thread {
 	final static Logger logger = LoggerFactory.getLogger(TGroup.class);
 	private static LinkedList<String> groupIds = new LinkedList<String>();
 	private long time = 0;
+	public static String type = "post-group";
 	
 	public TGroup(){}
 	public TGroup(long time){
@@ -69,7 +70,7 @@ public class TGroup extends Thread {
 		try {
 			ResponseList<Post> posts = Facebook.getFacebook().getGroupFeed(groupId);
 			for (Post post : posts) {
-				Cassandra.insertPost(post, "post-group");
+				Cassandra.insertPost(post, type);
 				/*
 				String postId = post.getId();
 				TUser.addUserId(post.getFrom().getId());// Mais um usuario para minerar informacao

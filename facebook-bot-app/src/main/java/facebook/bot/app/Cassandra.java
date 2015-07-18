@@ -32,7 +32,7 @@ public class Cassandra {
 		}
 	}
 	
-	public static void insertPost(Post post, String type) {// pattern
+	public static void insertPost(Post post, String type) {
 		try {
 			String postId = post.getId();
 			IdNameEntity idNameEntity = post.getFrom();
@@ -111,7 +111,7 @@ public class Cassandra {
 		String rowKey = (type + "-" + rankingPosition);
 		List<ColumnOrSuperColumn> cscs = cassandra.findColumnOrSuperColumn(COLUMN_FAMILY_FACEBOOK_POST_POPULAR, rowKey);
 		if (cscs != null && !cscs.isEmpty()) {
-			return cscs.get(0);
+			return cscs.get(0);// TODO: I need to get the data more timestamp
 		} else {
 			return null;
 		}

@@ -16,6 +16,7 @@ public class TSearch extends Thread {
 	final static Logger logger = LoggerFactory.getLogger(TSearch.class);
 	private static LinkedList<String> words = new LinkedList<String>();
 	private long time = 0;
+	public static String type = "post-search";
 	
 	public TSearch(){}
 	public TSearch(long time){
@@ -82,7 +83,7 @@ public class TSearch extends Thread {
 		try {
 			ResponseList<Post> posts = Facebook.getFacebook().searchPosts(word);
 			for (Post post : posts) {
-				Cassandra.insertPost(post, "post-group");
+				Cassandra.insertPost(post, type);
 				/*
 				String postId = post.getId();
 				TUser.addUserId(post.getFrom().getId());// Mais um usuario para minerar informacao

@@ -15,6 +15,7 @@ public class TUser extends Thread {
 	final static Logger logger = LoggerFactory.getLogger(TUser.class);
 	private static LinkedList<String> userIds = new LinkedList<String>();
 	private long time = 0;
+	public static String type = "post-user";
 	
 	public TUser(){}
 	public TUser(long time){
@@ -69,12 +70,12 @@ public class TUser extends Thread {
 		try {
 			ResponseList<Post> posts = Facebook.getFacebook().getFeed(userId);
 			for (Post post : posts) {
-				Cassandra.insertPost(post, "post-group");
+				Cassandra.insertPost(post, type);
 				/*
 				String postId = post.getId();
 				PagableList<Comment> comments = post.getComments();
 				for (Comment comment : comments) {
-					TUser.addUserId(comment.getFrom().getId());// Mais um usuario para minerar informacao
+					TUser.addUserId(comment.getFrom().getId());// another user to mine information
 					//FacebookComments.postLikeCount(postId, comment);
 				}
 				*/

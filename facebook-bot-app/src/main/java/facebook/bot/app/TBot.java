@@ -1,6 +1,7 @@
 package facebook.bot.app;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -12,22 +13,73 @@ import org.slf4j.LoggerFactory;
 import facebook.bot.app.objects.IdNameEntityImpl;
 import facebook.bot.app.objects.PostImpl;
 
-public class Bot {
+public class TBot extends Thread {
 
-	final static Logger logger = LoggerFactory.getLogger(Cassandra.class);
-	private static final Integer amount = 5;
+	final static Logger logger = LoggerFactory.getLogger(TBot.class);
+	private static LinkedList<String> types = new LinkedList<String>();
+	private long time = 0;
+	private static Integer amount = 0;
 	
-	public static void main(String[] args) {
-		Bot bot = new Bot();
-		bot.insertPostPopular("test-post");
+	public TBot(){}
+	public TBot(long time){
+		this.time = time;
+		TBot.amount = 50;// default
+	}
+	public TBot(long time, int amount){
+		this.time = time;
+		TBot.amount = amount;
 	}
 	
-	private void insertPostPopular(String type) {
+	@Override
+    public void run() {
+        while (true) {
+            try {
+            	if (types.size() > 0) {
+            		String type = getType();
+            		processMostPopularPosting(type);
+            	} else {
+            		logger.info("there no are types for process");
+            	}
+                TGroup.sleep(time);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+	
+	public static void addType(String type){
+		types.add(type);
+	}
+	
+	public static void removeType(String type){
+		types.remove(type);
+	}
+	
+	public static void addTypeAll(List<String> typesList){
+		types.addAll(typesList);
+	}
+	
+	public static LinkedList<String> getTypes() {
+		return types;
+	}
+	
+	public static void setPostIds(LinkedList<String> types) {
+		TBot.types = types;
+	}
+	
+	private String getType() {
+		int p = types.size() - 1;
+		String type = types.get(p);
+		//types.remove(p); // TODO: check strategy to keep a list of various types
+		return type;
+	}
+	
+	private void processMostPopularPosting(String type) {
 		logger.info("starting scan misread the post " + type + " type");
 		List<PostImpl> popularPosts = new ArrayList<PostImpl>();// TODO: check interface Post
 		Set<Integer> rankingPosition = new TreeSet<Integer>();
 		
-		int smaller = 0, popular = 0, amount = Bot.amount;
+		int smaller = 0, popular = 0, amount = TBot.amount;
 		List<ColumnOrSuperColumn> cscs = Cassandra.getPost(type);
 		if (cscs != null && !cscs.isEmpty()) {
 			for (ColumnOrSuperColumn csc : cscs) {
@@ -41,7 +93,7 @@ public class Bot {
 				String[] column = Cassandra.createString(csc.super_column.columns.get(0).getName()).split("-");
 				Integer commentsCount = Integer.parseInt(column[0]);
 				Integer likeCount = Integer.parseInt(column[1]);
-				int popularity = commentsCount + likeCount;// The popularity of posting is the sum of tanned with comments.
+				int popularity = commentsCount + likeCount;// the popularity of posting is the sum of tanned with comments.
 				
 				String message = Cassandra.createString(csc.super_column.columns.get(0).getValue());
 				
@@ -71,7 +123,7 @@ public class Bot {
 						}
 					}
 					
-					if (smallerCount > 1) {// If more than a good low popularity, we will enter the post without removing any.
+					if (smallerCount > 1) {// if more than a good low popularity, we will enter the post without removing any.
 						amount = amount + 1;
 					} else {
 						popularPosts.remove(positionSmaller);
@@ -101,7 +153,7 @@ public class Bot {
 				Cassandra.removePost(post, type);// I can remove, we will no longer use. This data can be found again
 			}
 			
-			int ranking = Bot.amount;
+			int ranking = TBot.amount;
 			for (Integer rp : rankingPosition) {
 				for (int x = 0, y = popularPosts.size(); x < y; x++) {
 					PostImpl post = popularPosts.get(x);
