@@ -9,11 +9,6 @@ import java.util.List;
 
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnOrSuperColumn;
-import org.apache.cassandra.thrift.InvalidRequestException;
-import org.apache.cassandra.thrift.TimedOutException;
-import org.apache.cassandra.thrift.UnavailableException;
-import org.apache.thrift.TException;
-import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +22,6 @@ public class Cassandra {
 
 	final static Logger logger = LoggerFactory.getLogger(Cassandra.class);
 	private static ICassandra cassandra = new CassandraImpl();
-	
-	// TODO: remove try/catch this class. 
 	
 	public static String createString(byte[] bytes) {
 		try {
@@ -90,13 +83,6 @@ public class Cassandra {
 		}
 	}
 	
-	// TODO: this method needs to be tested
-	// when deleting a column, you can no longer add anything in it
-	public static void updatePostPopular(Post post, String type, Integer position) {
-		removePostPopular(type, position);
-		insertPostPopular(post, type, position);
-	}
-	
 	public static void removePost(Post post, String type) {
 		String postId = post.getId();
 		IdNameEntity idNameEntity = post.getFrom();
@@ -118,50 +104,16 @@ public class Cassandra {
 	}
 
 	public static List<ColumnOrSuperColumn> getPost(String type) {
-		try {
-			return cassandra.findColumnOrSuperColumn(COLUMN_FAMILY_FACEBOOK_POST, type);
-		} catch (TTransportException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
-		} catch (InvalidRequestException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
-		} catch (UnavailableException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
-		} catch (TimedOutException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
-		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
-		} catch (UnsupportedEncodingException e) {
-			logger.error("[Info: encoding invalid] - [Error: " + e.toString() + "]", e);
-		}
-		return null;
+		return cassandra.findColumnOrSuperColumn(COLUMN_FAMILY_FACEBOOK_POST, type);
 	}
 	
 	public static ColumnOrSuperColumn getPostPopular(String type, Integer rankingPosition) {
-		try {
-			String rowKey = (type + "-" + rankingPosition);
-			List<ColumnOrSuperColumn> cscs = cassandra.findColumnOrSuperColumn(COLUMN_FAMILY_FACEBOOK_POST_POPULAR, rowKey);
+		String rowKey = (type + "-" + rankingPosition);
+		List<ColumnOrSuperColumn> cscs = cassandra.findColumnOrSuperColumn(COLUMN_FAMILY_FACEBOOK_POST_POPULAR, rowKey);
+		if (cscs != null && !cscs.isEmpty()) {
 			return cscs.get(0);
-		} catch (TTransportException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
-		} catch (InvalidRequestException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
-		} catch (UnavailableException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
-		} catch (TimedOutException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
-		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
-		} catch (UnsupportedEncodingException e) {
-			logger.error("[Info: encoding invalid] - [Error: " + e.toString() + "]", e);
+		} else {
+			return null;
 		}
-		return null;
 	}
 }

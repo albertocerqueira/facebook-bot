@@ -2,7 +2,6 @@ package facebook.bot.cassandra;
 
 import static facebook.bot.cassandra.Constants.CL_1;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -194,34 +193,63 @@ public class CassandraImpl implements ICassandra {
 	}
 	
 	@Override
-	public Integer countColumnsInSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException, TTransportException {
+	public Integer countColumnsInSuperColumn(String columnFamily, String rowKey, String superColumn) {
 		ColumnPath path = new ColumnPath();
 		path.super_column = ByteBuffer.wrap(superColumn.getBytes());
 		path.column_family = columnFamily;
-		ColumnOrSuperColumn sc = null;
 		try {
-			sc = getClientConect().get(ByteBuffer.wrap(rowKey.getBytes()), path, CL_1);
+			ColumnOrSuperColumn sc = getClientConect().get(ByteBuffer.wrap(rowKey.getBytes()), path, CL_1);
+			return sc.super_column.getColumns().size();
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} finally {
 			getClientClose();
 		}
-		return sc.super_column.getColumns().size();
+		return null;
 	}
 	
 	@Override
-	public Column findColumn(String columnFamily, String rowKey, String column) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+	public Column findColumn(String columnFamily, String rowKey, String column) {
 		ColumnPath path = new ColumnPath();
 		path.column_family = columnFamily;
 		path.column = ByteBuffer.wrap(column.getBytes());
 		try {
 			ColumnOrSuperColumn sc = getClientConect().get(ByteBuffer.wrap(rowKey.getBytes()), path, CL_1);
 			return sc.column;
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} finally {
 			getClientClose();
 		}
+		return null;
 	}
 	
 	@Override
-	public Column findColumn(String columnFamily, String rowKey, String superColumn, String column) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+	public Column findColumn(String columnFamily, String rowKey, String superColumn, String column) {
 		ColumnPath path = new ColumnPath();
 		path.column_family = columnFamily;
 		path.super_column = ByteBuffer.wrap(superColumn.getBytes());
@@ -229,18 +257,33 @@ public class CassandraImpl implements ICassandra {
 		try {
 			ColumnOrSuperColumn sc = getClientConect().get(ByteBuffer.wrap(rowKey.getBytes()), path, CL_1);
 			return sc.column;
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} finally {
 			getClientClose();
 		}
+		return null;
 	}
 	
 	@Override
-	public List<Column> findColumns(String columnFamily, String rowKey, String...columns) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+	public List<Column> findColumns(String columnFamily, String rowKey, String...columns) {
 		List<Column> cs = new ArrayList<Column>();
 		ColumnPath path = new ColumnPath();
 		path.column_family = columnFamily;
-		Cassandra.Client client = getClientConect();
 		try {
+			Cassandra.Client client = getClientConect();
 			for (String column : columns) {
 				path.column = ByteBuffer.wrap(column.getBytes());
 				try {
@@ -250,6 +293,20 @@ public class CassandraImpl implements ICassandra {
 					logger.error("[Info: data not found] - [Column Family: " + columnFamily + "] - [Column: " + column + "] - [Error: " + e.toString() + "]", e);
 				}
 			}
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} finally {
 			getClientClose();
 		}
@@ -257,25 +314,40 @@ public class CassandraImpl implements ICassandra {
 	}
 	
 	@Override
-	public SuperColumn findSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+	public SuperColumn findSuperColumn(String columnFamily, String rowKey, String superColumn) {
 		ColumnPath path = new ColumnPath();
 		path.super_column = ByteBuffer.wrap(superColumn.getBytes());
 		path.column_family = columnFamily;
 		try {
 			ColumnOrSuperColumn sc = getClientConect().get(ByteBuffer.wrap(rowKey.getBytes()), path, CL_1);
 			return sc.super_column;
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} finally {
 			getClientClose();
 		}
+		return null;
 	}
 	
 	@Override
-	public List<SuperColumn> findSuperColumns(String columnFamily, String rowKey, String...superColumns) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+	public List<SuperColumn> findSuperColumns(String columnFamily, String rowKey, String...superColumns) {
 		List<SuperColumn> scs = new ArrayList<SuperColumn>();
 		ColumnPath path = new ColumnPath();
 		path.column_family = columnFamily;
-		Cassandra.Client client = getClientConect();
 		try {
+			Cassandra.Client client = getClientConect();
 			for (String superColumn : superColumns) {
 				path.super_column = ByteBuffer.wrap(superColumn.getBytes());
 				try {
@@ -285,6 +357,20 @@ public class CassandraImpl implements ICassandra {
 					logger.error("[Info: data not found] - [Column Family: " + columnFamily + "] - [Super Column: " + superColumn + "] - [Error: " + e.toString() + "]", e);
 				}
 			}
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} finally {
 			getClientClose();
 		}
@@ -292,7 +378,7 @@ public class CassandraImpl implements ICassandra {
 	}
 	
 	@Override
-	public List<ColumnOrSuperColumn> findColumnOrSuperColumn(String columnFamily, String rowKey) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException {
+	public List<ColumnOrSuperColumn> findColumnOrSuperColumn(String columnFamily, String rowKey) {
 		SlicePredicate predicate = getSlicePredicate(new byte[0], new byte[0], false, sliceRangeCount);
 		ColumnParent parent = new ColumnParent(columnFamily);
 		KeyRange keyRange = getKeyRange(rowKey, 1);
@@ -303,9 +389,24 @@ public class CassandraImpl implements ICassandra {
 				csc.addAll(ks.columns);
 			}
 			return csc;
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
 		} finally {
 			getClientClose();
 		}
+		return null;
 	}
 	
 	@Override

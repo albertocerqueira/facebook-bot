@@ -1,17 +1,10 @@
 package facebook.bot.cassandra;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnOrSuperColumn;
-import org.apache.cassandra.thrift.InvalidRequestException;
-import org.apache.cassandra.thrift.NotFoundException;
 import org.apache.cassandra.thrift.SuperColumn;
-import org.apache.cassandra.thrift.TimedOutException;
-import org.apache.cassandra.thrift.UnavailableException;
-import org.apache.thrift.TException;
-import org.apache.thrift.transport.TTransportException;
 
 public interface ICassandra {
 
@@ -31,12 +24,12 @@ public interface ICassandra {
 	 */
 	public void removeColumn(String columnFamily, String rowKey);
 	
-	public Integer countColumnsInSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException, TTransportException;
-	public Column findColumn(String columnFamily, String rowKey, String column) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
-	public Column findColumn(String columnFamily, String rowKey, String superColumn, String column) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
-	public List<Column> findColumns(String columnFamily, String rowKey, String...columns) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
-	public SuperColumn findSuperColumn(String columnFamily, String rowKey, String superColumn) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
-	public List<SuperColumn> findSuperColumns(String columnFamily, String rowKey, String...superColumns) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
-	public List<ColumnOrSuperColumn> findColumnOrSuperColumn(String columnFamily, String rowKey) throws InvalidRequestException, NotFoundException, UnavailableException, TimedOutException, TException, UnsupportedEncodingException;
+	public Integer countColumnsInSuperColumn(String columnFamily, String rowKey, String superColumn);
+	public Column findColumn(String columnFamily, String rowKey, String column);
+	public Column findColumn(String columnFamily, String rowKey, String superColumn, String column);
+	public List<Column> findColumns(String columnFamily, String rowKey, String...columns);
+	public SuperColumn findSuperColumn(String columnFamily, String rowKey, String superColumn);
+	public List<SuperColumn> findSuperColumns(String columnFamily, String rowKey, String...superColumns);
+	public List<ColumnOrSuperColumn> findColumnOrSuperColumn(String columnFamily, String rowKey);
 	
 }

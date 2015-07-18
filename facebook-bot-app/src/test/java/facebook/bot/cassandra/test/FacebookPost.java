@@ -58,27 +58,29 @@ public class FacebookPost {
 		}
 	}
 	
-	//@Test
+	@Test
 	public void remove_facebook_post() {
 		List<ColumnOrSuperColumn> cscs = Cassandra.getPost(type);
-		for (ColumnOrSuperColumn csc : cscs) {
-			PostImpl post = new PostImpl();
-			
-			String[] superColumn = Cassandra.createString(csc.super_column.getName()).split("-");
-			String postId = superColumn[0];
-			String userId = superColumn[1];
-			String userName = superColumn[2];
-			
-			IdNameEntityImpl from = new IdNameEntityImpl();
-			from.setId(userId);
-			from.setName(userName);
-
-			post.setId(postId);
-			post.setFrom(from);
-			
-			Cassandra.removePost(post, type);
-			
-			logger.info("remove data in facebook_post [" + Cassandra.createString(csc.super_column.getName()) + "]");
+		if (cscs != null && !cscs.isEmpty()) {
+			for (ColumnOrSuperColumn csc : cscs) {
+				PostImpl post = new PostImpl();
+				
+				String[] superColumn = Cassandra.createString(csc.super_column.getName()).split("-");
+				String postId = superColumn[0];
+				String userId = superColumn[1];
+				String userName = superColumn[2];
+				
+				IdNameEntityImpl from = new IdNameEntityImpl();
+				from.setId(userId);
+				from.setName(userName);
+				
+				post.setId(postId);
+				post.setFrom(from);
+				
+				Cassandra.removePost(post, type);
+				
+				logger.info("remove data in facebook_post [" + Cassandra.createString(csc.super_column.getName()) + "]");
+			}
 		}
 	}
 }

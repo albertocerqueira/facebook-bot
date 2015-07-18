@@ -44,23 +44,25 @@ public class FacebookPostPopular {
 		for (int x = 2; x < 1000; x++) {
 			ColumnOrSuperColumn csc = Cassandra.getPostPopular(type, x);
 			
-			PostImpl post = new PostImpl();
-			
-			String[] column = Cassandra.createString(csc.column.getName()).split("-");
-			String postId = column[0];
-			String userId = column[1];
-			String userName = column[2];
-			
-			IdNameEntityImpl from = new IdNameEntityImpl();
-			from.setId(userId);
-			from.setName(userName);
-
-			post.setId(postId);
-			post.setFrom(from);
-			
-			Cassandra.removePostPopular(type, x);
-			
-			logger.info("remove data in facebook_post_popular [" + Cassandra.createString(csc.column.getName()) + "]");
+			if (csc != null) {
+				PostImpl post = new PostImpl();
+				
+				String[] column = Cassandra.createString(csc.column.getName()).split("-");
+				String postId = column[0];
+				String userId = column[1];
+				String userName = column[2];
+				
+				IdNameEntityImpl from = new IdNameEntityImpl();
+				from.setId(userId);
+				from.setName(userName);
+				
+				post.setId(postId);
+				post.setFrom(from);
+				
+				Cassandra.removePostPopular(type, x);
+				
+				logger.info("remove data in facebook_post_popular [" + Cassandra.createString(csc.column.getName()) + "]");
+			}
 		}
 	}
 }
