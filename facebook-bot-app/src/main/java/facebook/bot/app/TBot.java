@@ -74,6 +74,7 @@ public class TBot extends Thread {
 		return type;
 	}
 	
+	// TODO: needs more testing, the logic may be incorrect
 	private void processMostPopularPosting(String type) {
 		logger.info("starting scan misread the post " + type + " type");
 		List<PostImpl> popularPosts = new ArrayList<PostImpl>();// TODO: check interface Post

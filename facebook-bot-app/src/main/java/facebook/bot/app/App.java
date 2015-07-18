@@ -13,14 +13,14 @@ public class App {
 		new Thread().sleep(Process.in1Second.getTime());
 	    
 		logger.info("starting thread TSearch");
-		TSearch tSearch = new TSearch(Process.in30Seconds.getTime());
+		TSearch tSearch = new TSearch(Process.in1Second.getTime());
 		tSearch.start();
 		tSearch.addWord("palmeiras");
 		
 		new Thread().sleep(Process.in1Second.getTime());
 		
 		logger.info("starting thread TGroup");
-		TGroup tGroup = new TGroup(Process.in30Seconds.getTime());
+		TGroup tGroup = new TGroup(Process.in1Second.getTime());
 		tGroup.start();
 		
 		new Thread().sleep(Process.in1Second.getTime());

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import facebook.bot.cassandra.CassandraImpl;
 import facebook.bot.cassandra.Clock;
 import facebook.bot.cassandra.ICassandra;
+import facebook.bot.lib.StringUtils;
 import facebook4j.IdNameEntity;
 import facebook4j.Post;
 
@@ -50,7 +51,11 @@ public class Cassandra {
 			String columnName = commentsCount + "-" + likeCount;
 			column.setName(columnName.getBytes(UTF8));
 			String columnValue = post.getMessage();
-			column.setValue(columnValue.getBytes(UTF8));
+			if (!StringUtils.isBlank(columnValue)) {
+				column.setValue(columnValue.getBytes(UTF8));
+			} else {
+				column.setValue("".getBytes(UTF8));
+			}
 			column.setTimestamp(clock.timestamp);
 			
 			cassandra.insertSuperColumn(columnFamily, rowKey, superColumn, column);
