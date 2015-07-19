@@ -78,17 +78,11 @@ public class TBot extends Thread {
 		return type;
 	}
 	
-	public static void main(String[] args) {
-		TBot tBot = new TBot(50);
-		tBot.processMostPopularPosting("test-post");
-	}
-	
 	private void processMostPopularPosting(String type) {
 		logger.info("starting scan misread the post " + type + " type");
 		List<PostImpl> popularPosts = new ArrayList<PostImpl>();// TODO: check interface Post
 		Set<Integer> rankingPosition = new TreeSet<Integer>();// TreeSet() values are not repeated
 		
-		int amount = TBot.amount.intValue();
 		List<ColumnOrSuperColumn> cscs = Cassandra.getPost(type);
 		if (cscs != null && !cscs.isEmpty()) {
 			for (ColumnOrSuperColumn csc : cscs) {
@@ -127,7 +121,7 @@ public class TBot extends Thread {
 			int rf = rankingPosition.size() - TBot.amount.intValue();// posts limit determined by system strategy
 			int position = 0;
 			Object[] rps = (Object[]) rankingPosition.toArray();
-			for (int i = rps.length - 1; i >= 0 && rf <= i; i--) {// (rf > i) posts limit determined by system strategy
+			for (int i = rps.length - 1; i >= 0 && rf <= i && position != TBot.amount.intValue(); i--) {// (rf > i) posts limit determined by system strategy
 				Integer rp = (Integer) rps[i];
 				for (int x = 0, y = popularPosts.size(); x < y; x++) {
 					PostImpl post = popularPosts.get(x);

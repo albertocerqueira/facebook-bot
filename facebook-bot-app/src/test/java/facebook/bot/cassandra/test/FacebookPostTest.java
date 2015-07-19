@@ -22,11 +22,17 @@ public class FacebookPostTest {
 	final static Logger logger = LoggerFactory.getLogger(FacebookPostTest.class);
 	
 	public static String type = "test-post";
+	public Integer quantity = 2000;
+	
+	public FacebookPostTest() {}
+	public FacebookPostTest(int quantity) {
+		this.quantity = quantity;
+	}
 	
 	@Test
 	public void insert_facebook_post() {
 		Random r = new Random();
-		for (int x = 0; x < 2000; x++) {
+		for (int x = 0; x < quantity; x++) {
 			IdNameEntityImpl from = new IdNameEntityImpl();
 			long userId = r.nextLong();
 			from.setId((userId < 0 ? (userId * -1) : userId) + "");
