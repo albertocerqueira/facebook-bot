@@ -25,6 +25,10 @@ public class TBot extends Thread {
 		this.time = time;
 		TBot.amount = 50;// default
 	}
+	public TBot(int amount){
+		this.time = Process.in30Minutes.getTime();// default
+		TBot.amount = amount;
+	}
 	public TBot(long time, int amount){
 		this.time = time;
 		TBot.amount = amount;
@@ -70,17 +74,21 @@ public class TBot extends Thread {
 	private String getType() {
 		int p = types.size() - 1;
 		String type = types.get(p);
-		//types.remove(p); // TODO: check strategy to keep a list of various types
+		types.remove(p);
 		return type;
 	}
 	
-	// TODO: needs more testing, the logic may be incorrect
+	public static void main(String[] args) {
+		TBot tBot = new TBot(50);
+		tBot.processMostPopularPosting("test-post");
+	}
+	
 	private void processMostPopularPosting(String type) {
 		logger.info("starting scan misread the post " + type + " type");
 		List<PostImpl> popularPosts = new ArrayList<PostImpl>();// TODO: check interface Post
-		Set<Integer> rankingPosition = new TreeSet<Integer>();
+		Set<Integer> rankingPosition = new TreeSet<Integer>();// TreeSet() values are not repeated
 		
-		int smaller = 0, popular = 0, amount = TBot.amount;
+		int amount = TBot.amount.intValue();
 		List<ColumnOrSuperColumn> cscs = Cassandra.getPost(type);
 		if (cscs != null && !cscs.isEmpty()) {
 			for (ColumnOrSuperColumn csc : cscs) {
@@ -96,6 +104,9 @@ public class TBot extends Thread {
 				Integer likeCount = Integer.parseInt(column[1]);
 				int popularity = commentsCount + likeCount;// the popularity of posting is the sum of tanned with comments.
 				
+				String sc = postId + "-" + userId + "-" + userName;
+				logger.info("processing super column " + sc);
+				
 				String message = Cassandra.createString(csc.super_column.columns.get(0).getValue());
 				
 				IdNameEntityImpl from = new IdNameEntityImpl();
@@ -107,69 +118,35 @@ public class TBot extends Thread {
 				post.setPopularity(popularity);
 				post.setMessage(message);
 				
-				boolean isPopular = false;
-				if (smaller < popularity && popular < amount) {
-					popularPosts.add(post);
-					rankingPosition.add(popularity);
-					popular++;
-					isPopular = true;
-				} else if (smaller < popularity) {
-					int smallerCount = 0, positionSmaller = 0;
-					for (int x = 0, y = popularPosts.size(); x < y; x++) {
-						PostImpl p = popularPosts.get(x);
-						
-						if (p.getPopularity() == smaller) {
-							smallerCount++;
-							positionSmaller = x;
-						}
-					}
-					
-					if (smallerCount > 1) {// if more than a good low popularity, we will enter the post without removing any.
-						amount = amount + 1;
-					} else {
-						popularPosts.remove(positionSmaller);
-						rankingPosition.remove(smaller);
-						popular--;
-					}
-					
-					popularPosts.add(post);
-					rankingPosition.add(popularity);
-					popular++;
-					isPopular = true;
-					
-					int m = 0;
-					for (int x = 0, y = popularPosts.size(); x < y; x++) {
-						PostImpl p = popularPosts.get(x);
-						int pop = p.getPopularity();
-						if (x == 0 || pop < m) {
-							smaller = pop;
-						}
-					}
-				}
-				
-				if ((smaller == 0 || smaller > popularity) && isPopular) {// lower among popular
-					smaller = popularity;
-				}
+				popularPosts.add(post);
+				rankingPosition.add(popularity);
 				
 				Cassandra.removePost(post, type);// I can remove, we will no longer use. This data can be found again
 			}
 			
-			int ranking = TBot.amount;
-			for (Integer rp : rankingPosition) {
+			int rf = rankingPosition.size() - TBot.amount.intValue();// posts limit determined by system strategy
+			int position = 0;
+			Object[] rps = (Object[]) rankingPosition.toArray();
+			for (int i = rps.length - 1; i >= 0 && rf <= i; i--) {// (rf > i) posts limit determined by system strategy
+				Integer rp = (Integer) rps[i];
 				for (int x = 0, y = popularPosts.size(); x < y; x++) {
 					PostImpl post = popularPosts.get(x);
 					int popularity = post.getPopularity();
+					
 					if (popularity == rp) {
-						logger.info("posting the position " + ranking + "° " + post.toString());
+						int p = ++position;
+						logger.info("posting the position " + p + "° " + post.toString());
 						
-						Cassandra.insertPostPopular(post, type, ranking);// the largest timestamp value is the popular post that we want
+						Cassandra.insertPostPopular(post, type, p);// the largest timestamp value is the popular post that we want
 						
-						ranking--;
 						popularPosts.remove(x);
-						break;
+						x = 0;
+						y = popularPosts.size();
+						//break; // some poster with the same popularities
 					}
 				}
 			}
+			
 			logger.info(amount + " more popular posting stored in their positions");
 		}
 	}

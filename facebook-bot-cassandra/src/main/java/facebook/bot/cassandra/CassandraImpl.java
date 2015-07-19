@@ -124,6 +124,41 @@ public class CassandraImpl implements ICassandra {
 	}
 	
 	@Override
+	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn) {
+		try {
+			Clock clock = new Clock(System.nanoTime());
+			Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
+			Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
+			List<Mutation> mutationList = new ArrayList<Mutation>();
+			Mutation mutation = new Mutation();
+			Deletion deletion = new Deletion();
+			deletion.setSuper_column(superColumn.getBytes());
+			deletion.setTimestamp(clock.timestamp);
+			mutation.setDeletion(deletion);
+			mutationList.add(mutation);
+			mutationMapInner.put(columnFamily, mutationList);
+			mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
+			getClientConect().batch_mutate(mutationMapOuter, CL_1);
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
+		} finally {
+			getClientClose();
+		}
+	}
+	
+	@Override
 	public void insertColumn(String columnFamily, String rowKey, Column column) {
 		try {
 			ColumnParent parent = new ColumnParent(columnFamily);
@@ -169,6 +204,37 @@ public class CassandraImpl implements ICassandra {
 			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
 		} catch (TException e) {
 			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
+		}
+	}
+	
+	@Override
+	public void removeColumn(String columnFamily, String rowKey) {
+		try {
+			StringBuilder cql = new StringBuilder();
+			cql.append("delete ");
+			cql.append(" from ");
+			cql.append(columnFamily);
+			cql.append(" where KEY = '");
+			cql.append(rowKey);
+			cql.append("'");
+			String query = cql.toString();
+			getClientConect().execute_cql_query(ByteBuffer.wrap(query.getBytes()), Compression.NONE);
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
+		} finally {
+			getClientClose();
 		}
 	}
 	
@@ -218,6 +284,38 @@ public class CassandraImpl implements ICassandra {
 			getClientClose();
 		}
 		return null;
+	}
+	
+	@Override
+	public Integer countColumnOrSuperColumn(String columnFamily, String rowKey) {
+		SlicePredicate predicate = getSlicePredicate(new byte[0], new byte[0], false, sliceRangeCount);
+		ColumnParent parent = new ColumnParent(columnFamily);
+		KeyRange keyRange = getKeyRange(rowKey, 1);
+		try {
+			List<KeySlice> keysSlices = getClientConect().get_range_slices(parent, predicate, keyRange, CL_1);
+			Integer c = 0;
+			for (KeySlice ks : keysSlices) {
+				c += ks.columns.size();
+			}
+			return c;
+		} catch (TTransportException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
+		} catch (InvalidRequestException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
+		} catch (UnavailableException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
+		} catch (TimedOutException e) {
+			logger.info("unusual exception occurred");
+			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
+		} catch (TException e) {
+			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
+		} finally {
+			getClientClose();
+		}
+		return 0;
 	}
 	
 	@Override
@@ -407,71 +505,5 @@ public class CassandraImpl implements ICassandra {
 			getClientClose();
 		}
 		return null;
-	}
-	
-	@Override
-	public void removeSuperColumn(String columnFamily, String rowKey, String superColumn) {
-		try {
-			Clock clock = new Clock(System.nanoTime());
-			Map<ByteBuffer, Map<String, List<Mutation>>> mutationMapOuter = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
-			Map<String, List<Mutation>> mutationMapInner = new HashMap<String, List<Mutation>>();
-			List<Mutation> mutationList = new ArrayList<Mutation>();
-			Mutation mutation = new Mutation();
-			Deletion deletion = new Deletion();
-			deletion.setSuper_column(superColumn.getBytes());
-			deletion.setTimestamp(clock.timestamp);
-			mutation.setDeletion(deletion);
-			mutationList.add(mutation);
-			mutationMapInner.put(columnFamily, mutationList);
-			mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
-			getClientConect().batch_mutate(mutationMapOuter, CL_1);
-		} catch (TTransportException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
-		} catch (InvalidRequestException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
-		} catch (UnavailableException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
-		} catch (TimedOutException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
-		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
-		} finally {
-			getClientClose();
-		}
-	}
-
-	@Override
-	public void removeColumn(String columnFamily, String rowKey) {
-		try {
-			StringBuilder cql = new StringBuilder();
-			cql.append("delete ");
-			cql.append(" from ");
-			cql.append(columnFamily);
-			cql.append(" where KEY = '");
-			cql.append(rowKey);
-			cql.append("'");
-			String query = cql.toString();
-			getClientConect().execute_cql_query(ByteBuffer.wrap(query.getBytes()), Compression.NONE);
-		} catch (TTransportException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: db cassandra stopped] - [Error: " + e.toString() + "]", e);
-		} catch (InvalidRequestException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: access to invalid method] - [Error: " + e.toString() + "]", e);
-		} catch (UnavailableException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: servlet container is not active] - [Error: " + e.toString() + "]", e);
-		} catch (TimedOutException e) {
-			logger.info("unusual exception occurred");
-			logger.error("[Info: time out for insert] - [Error: " + e.toString() + "]", e);
-		} catch (TException e) {
-			logger.error("[Info: generic exception of thrift] - [Error: " + e.toString() + "]", e);
-		} finally {
-			getClientClose();
-		}
 	}
 }

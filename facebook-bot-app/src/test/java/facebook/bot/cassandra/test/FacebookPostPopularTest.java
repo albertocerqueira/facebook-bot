@@ -12,9 +12,9 @@ import facebook.bot.app.Cassandra;
 import facebook.bot.app.objects.IdNameEntityImpl;
 import facebook.bot.app.objects.PostImpl;
 
-public class FacebookPostPopular {
+public class FacebookPostPopularTest {
 
-	final static Logger logger = LoggerFactory.getLogger(FacebookPostPopular.class);
+	final static Logger logger = LoggerFactory.getLogger(FacebookPostPopularTest.class);
 	
 	private String type = "test-post";
 	

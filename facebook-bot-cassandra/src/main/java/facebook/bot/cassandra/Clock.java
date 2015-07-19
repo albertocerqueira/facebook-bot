@@ -327,7 +327,6 @@ public class Clock implements TBase<Clock, Clock._Fields>, java.io.Serializable,
 
 	public void write(TProtocol oprot) throws TException {
 		validate();
-
 		oprot.writeStructBegin(STRUCT_DESC);
 		oprot.writeFieldBegin(TIMESTAMP_FIELD_DESC);
 		oprot.writeI64(this.timestamp);
@@ -339,11 +338,8 @@ public class Clock implements TBase<Clock, Clock._Fields>, java.io.Serializable,
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Clock(");
-		boolean first = true;
-
 		sb.append("timestamp:");
 		sb.append(this.timestamp);
-		first = false;
 		sb.append(")");
 		return sb.toString();
 	}
@@ -358,7 +354,5 @@ public class Clock implements TBase<Clock, Clock._Fields>, java.io.Serializable,
 		return null;
 	}
 
-	public void clear() {
-		
-	}
+	public void clear() {}
 }

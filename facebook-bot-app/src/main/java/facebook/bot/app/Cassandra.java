@@ -108,6 +108,10 @@ public class Cassandra {
 		cassandra.removeColumn(columnFamily, rowKey);
 	}
 
+	public static Integer countPost(String type) {
+		return cassandra.countColumnOrSuperColumn(COLUMN_FAMILY_FACEBOOK_POST, type);
+	}
+	
 	public static List<ColumnOrSuperColumn> getPost(String type) {
 		return cassandra.findColumnOrSuperColumn(COLUMN_FAMILY_FACEBOOK_POST, type);
 	}

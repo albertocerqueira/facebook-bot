@@ -17,16 +17,16 @@ import facebook4j.Comment;
 import facebook4j.IdNameEntity;
 import facebook4j.PagableList;
 
-public class FacebookPost {
+public class FacebookPostTest {
 
-	final static Logger logger = LoggerFactory.getLogger(FacebookPost.class);
+	final static Logger logger = LoggerFactory.getLogger(FacebookPostTest.class);
 	
-	private String type = "test-post";
+	public static String type = "test-post";
 	
 	@Test
 	public void insert_facebook_post() {
 		Random r = new Random();
-		for (int x = 0; x < 1000; x++) {
+		for (int x = 0; x < 2000; x++) {
 			IdNameEntityImpl from = new IdNameEntityImpl();
 			long userId = r.nextLong();
 			from.setId((userId < 0 ? (userId * -1) : userId) + "");
@@ -38,7 +38,7 @@ public class FacebookPost {
 			post.setFrom(from);
 			post.setMessage("some text...");
 			
-			int s = r.nextInt(10000);
+			int s = r.nextInt(100000);
 
 			PagableList<Comment> comments = new PagableListImpl<Comment>();
 			for (int y = 0; y < s; y++) {
@@ -58,7 +58,7 @@ public class FacebookPost {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void remove_facebook_post() {
 		List<ColumnOrSuperColumn> cscs = Cassandra.getPost(type);
 		if (cscs != null && !cscs.isEmpty()) {

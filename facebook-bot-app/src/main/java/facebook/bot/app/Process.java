@@ -14,6 +14,7 @@ public enum Process {
 	in20Seconds(20 * 1000),//20 seconds
 	in30Seconds(30 * 1000),//30 seconds
 	in40Seconds(40 * 1000),//40 seconds
+	in90Seconds(90 * 1000),//90 seconds
 	in1Minute(60 * 1000),//1 minute
 	in2Minutes(2 * 60 * 1000),//2 minute
 	in8Minutes(8 * 60 * 1000),//8 minute

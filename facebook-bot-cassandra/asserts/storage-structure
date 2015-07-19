@@ -3,6 +3,9 @@ Storage Structure:
 keyspace column-family['row-key']['super-column']['column'] = 'value';
 keyspace column-family['row-key']['column'] = 'value';
 
+https://facebook.com/ + user-id => Usuário comun.
+https://facebook.com/ + post-group-id => direciona o post para o top do grupo.
+https://facebook.com/ + post-id => direciona o para post.
 
 Facebook: post (like count / comment count):
 Super Column - facebook_post[type-post][post-id + user-id + user-name][comments-count + like-count] = 'some text...';
