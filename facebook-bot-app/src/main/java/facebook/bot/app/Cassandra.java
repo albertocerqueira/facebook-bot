@@ -28,7 +28,7 @@ public class Cassandra {
 		try {
 			return (new String(bytes, UTF8));
 		} catch (UnsupportedEncodingException e) {
-			logger.error("[Info: encoding invalid] - [Error: " + e.toString() + "]", e);
+			logger.error("[Info: encoding invalid] - [Error: {}]", e.toString());
 			return "erro [encoding invalid]";
 		}
 	}
@@ -60,7 +60,7 @@ public class Cassandra {
 			
 			cassandra.insertSuperColumn(columnFamily, rowKey, superColumn, column);
 		} catch (UnsupportedEncodingException e) {
-			logger.error("[Info: encoding invalid] - [Error: " + e.toString() + "]", e);
+			logger.error("[Info: encoding invalid] - [Error: {}]", e.toString());
 		}
 	}
 	
@@ -84,7 +84,7 @@ public class Cassandra {
 			
 			cassandra.insertColumn(columnFamily, rowKey, column);
 		} catch (UnsupportedEncodingException e) {
-			logger.error("[Info: encoding invalid] - [Error: " + e.toString() + "]", e);
+			logger.error("[Info: encoding invalid] - [Error: {}]", e.toString());
 		}
 	}
 	

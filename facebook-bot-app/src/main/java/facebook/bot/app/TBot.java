@@ -79,7 +79,7 @@ public class TBot extends Thread {
 	}
 	
 	private void processMostPopularPosting(String type) {
-		logger.info("starting scan misread the post " + type + " type");
+		logger.info("starting scan misread the post {} type", type);
 		List<PostImpl> popularPosts = new ArrayList<PostImpl>();// TODO: check interface Post
 		Set<Integer> rankingPosition = new TreeSet<Integer>();// TreeSet() values are not repeated
 		
@@ -99,7 +99,7 @@ public class TBot extends Thread {
 				int popularity = commentsCount + likeCount;// the popularity of posting is the sum of tanned with comments.
 				
 				String sc = postId + "-" + userId + "-" + userName;
-				logger.info("processing super column " + sc);
+				logger.info("processing super column {}", sc);
 				
 				String message = Cassandra.createString(csc.super_column.columns.get(0).getValue());
 				
@@ -129,7 +129,7 @@ public class TBot extends Thread {
 					
 					if (popularity == rp) {
 						int p = ++position;
-						logger.info("posting the position " + p + "° " + post.toString());
+						logger.info("posting the position {}° {}", p, post.toString());
 						
 						Cassandra.insertPostPopular(post, type, p);// the largest timestamp value is the popular post that we want
 						
@@ -141,7 +141,7 @@ public class TBot extends Thread {
 				}
 			}
 			
-			logger.info(amount + " more popular posting stored in their positions");
+			logger.info("{} more popular posting stored in their positions", amount);
 		}
 	}
 }

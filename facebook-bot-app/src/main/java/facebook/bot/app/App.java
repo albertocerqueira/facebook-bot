@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 public class App {
 	final static Logger logger = LoggerFactory.getLogger(App.class);
 
+	// TODO: create design with spring-boot to seek popular entries by browser
+	
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws InterruptedException {
 		logger.info("starting app");

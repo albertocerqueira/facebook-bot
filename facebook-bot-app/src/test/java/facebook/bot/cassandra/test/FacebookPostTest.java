@@ -60,11 +60,11 @@ public class FacebookPostTest {
 			
 			Cassandra.insertPost(post, type);
 			
-			logger.info("insert data in facebook_post [" + (x + 1) + "]");
+			logger.info("insert data in facebook_post [{}]", (x + 1));
 		}
 	}
 	
-	//@Test
+	@Test
 	public void remove_facebook_post() {
 		List<ColumnOrSuperColumn> cscs = Cassandra.getPost(type);
 		if (cscs != null && !cscs.isEmpty()) {
@@ -85,7 +85,7 @@ public class FacebookPostTest {
 				
 				Cassandra.removePost(post, type);
 				
-				logger.info("remove data in facebook_post [" + Cassandra.createString(csc.super_column.getName()) + "]");
+				logger.info("remove data in facebook_post [{}]", Cassandra.createString(csc.super_column.getName()));
 			}
 		}
 	}

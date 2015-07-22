@@ -35,7 +35,7 @@ public class FacebookPostPopularTest {
 			
 			Cassandra.insertPostPopular(post, type, x);
 			
-			logger.info("insert data in facebook_post_popular [" + (x + 1) + "].");
+			logger.info("insert data in facebook_post_popular [{}].", (x + 1));
 		}
 	}
 	
@@ -61,7 +61,7 @@ public class FacebookPostPopularTest {
 				
 				Cassandra.removePostPopular(type, x);
 				
-				logger.info("remove data in facebook_post_popular [" + Cassandra.createString(csc.column.getName()) + "]");
+				logger.info("remove data in facebook_post_popular [{}]", Cassandra.createString(csc.column.getName()));
 			}
 		}
 	}

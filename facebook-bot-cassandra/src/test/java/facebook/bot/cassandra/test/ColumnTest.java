@@ -37,7 +37,7 @@ public class ColumnTest {
 			
 			cassandra.insertColumn(columnFamily, ("row-key-" + p), column);
 			
-			logger.info("insert data in cf_test_simple [" + (x + 1) + "]");
+			logger.info("insert data in cf_test_simple [{}]", (x + 1));
 		}
 	}
 	
@@ -48,7 +48,7 @@ public class ColumnTest {
 			
 			cassandra.removeColumn(columnFamily, ("row-key-" + p));
 			
-			logger.info("remove data in cf_test_simple [" + (x + 1) + "]");
+			logger.info("remove data in cf_test_simple [{}]", (x + 1));
 		}
 	}
 }
