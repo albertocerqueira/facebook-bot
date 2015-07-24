@@ -13,17 +13,17 @@ import facebook.bot.cassandra.CassandraImpl;
 import facebook.bot.cassandra.Clock;
 import facebook.bot.cassandra.ICassandra;
 
-public class ColumnTest {
+public class SuperColumnTest {
 
-	final static Logger logger = LoggerFactory.getLogger(ColumnTest.class);
+	final static Logger logger = LoggerFactory.getLogger(SuperColumnTest.class);
 	private static ICassandra cassandra = new CassandraImpl();
 	
-	private String columnFamily = "cf_test_column";
-	public Integer quantity = 2000;
+	private String columnFamily = "cf_test_column_super";
+	private Integer quantity = 50000;
 	private Integer time = 10;
 	
 	@Test
-	public void insert_columns() throws UnsupportedEncodingException, InterruptedException {
+	public void insert_super_columns() throws UnsupportedEncodingException, InterruptedException {
 		for (int x = 0; x < quantity; x++) {
 			int p = (x + 1);
 			
@@ -33,7 +33,7 @@ public class ColumnTest {
 			column.setValue(("value-" + p).getBytes(UTF8));
 			column.setTimestamp(clock.timestamp);
 			
-			cassandra.insertColumn(columnFamily, ("row-key-" + p), column);
+			cassandra.insertSuperColumn(columnFamily, ("row-key-" + p), ("superColumn-" + p), column);
 			
 			logger.info("insert data in {} [{}]", columnFamily, p);
 			
@@ -41,12 +41,12 @@ public class ColumnTest {
 		}
 	}
 	
-	@Test
-	public void remove_columns() throws InterruptedException {
+	//@Test
+	public void remove_super_columns() throws InterruptedException {
 		for (int x = 0; x < quantity; x++) {
 			int p = (x + 1);
 			
-			cassandra.removeColumn(columnFamily, ("row-key-" + p));
+			cassandra.removeSuperColumn(columnFamily, ("row-key-" + p), ("superColumn-" + p));
 			
 			logger.info("remove data in {} [{}]", columnFamily, p);
 			

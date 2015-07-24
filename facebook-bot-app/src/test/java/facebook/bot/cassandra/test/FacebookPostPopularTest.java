@@ -17,11 +17,13 @@ public class FacebookPostPopularTest {
 	final static Logger logger = LoggerFactory.getLogger(FacebookPostPopularTest.class);
 	
 	private String type = "test-post";
+	public Integer quantity = 50000;
+	private Integer time = 10;
 	
 	@Test
-	public void insert_facebook_post_popular() throws UnsupportedEncodingException {
+	public void insert_facebook_post_popular() throws UnsupportedEncodingException, InterruptedException {
 		Random r = new Random();
-		for (int x = 0; x < 1000; x++) {
+		for (int x = 0; x < quantity; x++) {
 			IdNameEntityImpl from = new IdNameEntityImpl();
 			long userId = r.nextLong();
 			from.setId((userId < 0 ? (userId * -1) : userId) + "");
@@ -36,12 +38,14 @@ public class FacebookPostPopularTest {
 			Cassandra.insertPostPopular(post, type, x);
 			
 			logger.info("insert data in facebook_post_popular [{}].", (x + 1));
+			
+			Thread.sleep(time);
 		}
 	}
 	
 	@Test
-	public void remove_facebook_post_popular() {
-		for (int x = 2; x < 1000; x++) {
+	public void remove_facebook_post_popular() throws InterruptedException {
+		for (int x = 0; x < quantity; x++) {
 			ColumnOrSuperColumn csc = Cassandra.getPostPopular(type, x);
 			
 			if (csc != null) {
@@ -62,6 +66,8 @@ public class FacebookPostPopularTest {
 				Cassandra.removePostPopular(type, x);
 				
 				logger.info("remove data in facebook_post_popular [{}]", Cassandra.createString(csc.column.getName()));
+				
+				Thread.sleep(time);
 			}
 		}
 	}

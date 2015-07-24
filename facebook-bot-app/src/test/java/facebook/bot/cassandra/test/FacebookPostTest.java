@@ -22,7 +22,8 @@ public class FacebookPostTest {
 	final static Logger logger = LoggerFactory.getLogger(FacebookPostTest.class);
 	
 	public static String type = "test-post";
-	public Integer quantity = 2000;
+	public Integer quantity = 50000;
+	private Integer time = 10;
 	
 	public FacebookPostTest() {}
 	public FacebookPostTest(int quantity) {
@@ -30,7 +31,7 @@ public class FacebookPostTest {
 	}
 	
 	@Test
-	public void insert_facebook_post() {
+	public void insert_facebook_post() throws InterruptedException {
 		Random r = new Random();
 		for (int x = 0; x < quantity; x++) {
 			IdNameEntityImpl from = new IdNameEntityImpl();
@@ -61,11 +62,13 @@ public class FacebookPostTest {
 			Cassandra.insertPost(post, type);
 			
 			logger.info("insert data in facebook_post [{}]", (x + 1));
+			
+			Thread.sleep(time);
 		}
 	}
 	
 	@Test
-	public void remove_facebook_post() {
+	public void remove_facebook_post() throws InterruptedException {
 		List<ColumnOrSuperColumn> cscs = Cassandra.getPost(type);
 		if (cscs != null && !cscs.isEmpty()) {
 			for (ColumnOrSuperColumn csc : cscs) {
@@ -86,6 +89,8 @@ public class FacebookPostTest {
 				Cassandra.removePost(post, type);
 				
 				logger.info("remove data in facebook_post [{}]", Cassandra.createString(csc.super_column.getName()));
+				
+				Thread.sleep(time);
 			}
 		}
 	}
