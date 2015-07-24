@@ -3,6 +3,8 @@ package facebook.bot.cassandra.test;
 import static facebook.bot.cassandra.Constants.UTF8;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.cassandra.thrift.Column;
 import org.junit.Test;
@@ -23,6 +25,27 @@ public class SuperColumnTest {
 	private Integer time = 10;
 	
 	@Test
+	public void insert_super_columns_aplenty() throws UnsupportedEncodingException {
+		List<Column> columns = new ArrayList<Column>(quantity);
+		for (int x = 0; x < quantity; x++) {
+			int p = (x + 1);
+			
+			Clock clock = new Clock(System.nanoTime());
+			Column column = new Column();
+			column.setName(("column-" + p).getBytes(UTF8));
+			column.setValue(("value-" + p).getBytes(UTF8));
+			column.setTimestamp(clock.timestamp);
+			
+			columns.add(column);
+			
+			logger.info("create data for insert in {} [{}]", columnFamily, p);
+		}
+		cassandra.insertSuperColumns(columnFamily, "row-key", "superColumn", columns);
+		
+		logger.info("insert data in {}", columnFamily);
+	}
+	
+	//@Test
 	public void insert_super_columns() throws UnsupportedEncodingException, InterruptedException {
 		for (int x = 0; x < quantity; x++) {
 			int p = (x + 1);
@@ -41,7 +64,7 @@ public class SuperColumnTest {
 		}
 	}
 	
-	//@Test
+	@Test
 	public void remove_super_columns() throws InterruptedException {
 		for (int x = 0; x < quantity; x++) {
 			int p = (x + 1);
