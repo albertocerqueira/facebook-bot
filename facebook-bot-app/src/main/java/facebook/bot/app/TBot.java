@@ -78,6 +78,11 @@ public class TBot extends Thread {
 		return type;
 	}
 	
+	public static void main(String[] args) {
+		TBot bot = new TBot(50);
+		bot.processMostPopularPosting("test-post");
+	}
+	
 	private void processMostPopularPosting(String type) {
 		logger.info("starting scan misread the post {} type", type);
 		List<PostImpl> popularPosts = new ArrayList<PostImpl>();// TODO: check interface Post
@@ -116,6 +121,12 @@ public class TBot extends Thread {
 				rankingPosition.add(popularity);
 				
 				Cassandra.removePost(post, type);// I can remove, we will no longer use. This data can be found again
+				
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// all right
+				}
 			}
 			
 			int rf = rankingPosition.size() - TBot.amount.intValue();// posts limit determined by system strategy

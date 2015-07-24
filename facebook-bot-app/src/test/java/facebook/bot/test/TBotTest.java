@@ -28,7 +28,8 @@ public class TBotTest {
 	
 	@SuppressWarnings("static-access")
 	private static void carregarBase() throws InterruptedException {
-		FacebookPostTest fpt = new FacebookPostTest(30);
+		FacebookPostTest fpt = new FacebookPostTest();
+		fpt.quantity = 30;
 		while (true) {
 			fpt.insert_facebook_post();
 			TBot.addType(FacebookPostTest.type);

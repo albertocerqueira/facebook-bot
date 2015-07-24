@@ -25,11 +25,6 @@ public class FacebookPostTest {
 	public Integer quantity = 50000;
 	private Integer time = 10;
 	
-	public FacebookPostTest() {}
-	public FacebookPostTest(int quantity) {
-		this.quantity = quantity;
-	}
-	
 	@Test
 	public void insert_facebook_post() throws InterruptedException {
 		Random r = new Random();
