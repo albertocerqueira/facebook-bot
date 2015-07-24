@@ -70,7 +70,6 @@ public class CassandraImpl implements ICassandra {
 			mutationMapInner.put(columnFamily, mutationList);
 			mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
 			getClientConect().batch_mutate(mutationMapOuter, CL_1);
-			getClientClose();
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
 			logger.error("[Info: db cassandra stopped] - [Error: {}]", e.toString());
@@ -85,6 +84,8 @@ public class CassandraImpl implements ICassandra {
 			logger.error("[Info: time out for insert] - [Error: {}]", e.toString());
 		} catch (TException e) {
 			logger.error("[Info: generic exception of thrift] - [Error: {}]", e.toString());
+		} finally {
+			getClientClose();
 		}
 	}
 	
@@ -105,7 +106,6 @@ public class CassandraImpl implements ICassandra {
 			mutationMapInner.put(columnFamily, mutationList);
 			mutationMapOuter.put(ByteBuffer.wrap(rowKey.getBytes()), mutationMapInner);
 			getClientConect().batch_mutate(mutationMapOuter, CL_1);
-			getClientClose();
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
 			logger.error("[Info: db cassandra stopped] - [Error: {}]", e.toString());
@@ -120,6 +120,8 @@ public class CassandraImpl implements ICassandra {
 			logger.error("[Info: time out for insert] - [Error: {}]", e.toString());
 		} catch (TException e) {
 			logger.error("[Info: generic exception of thrift] - [Error: {}]", e.toString());
+		} finally {
+			getClientClose();
 		}
 	}
 	
@@ -163,7 +165,6 @@ public class CassandraImpl implements ICassandra {
 		try {
 			ColumnParent parent = new ColumnParent(columnFamily);
 	        getClientConect().insert(ByteBuffer.wrap(rowKey.getBytes()), parent, column, CL_1);
-	        getClientClose();
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
 			logger.error("[Info: db cassandra stopped] - [Error: {}]", e.toString());
@@ -178,6 +179,8 @@ public class CassandraImpl implements ICassandra {
 			logger.error("[Info: time out for insert] - [Error: {}]", e.toString());
 		} catch (TException e) {
 			logger.error("[Info: generic exception of thrift] - [Error: {}]", e.toString());
+		} finally {
+			getClientClose();
 		}
 	}
 
@@ -185,11 +188,11 @@ public class CassandraImpl implements ICassandra {
 	public void insertColumns(String columnFamily, String rowKey, List<Column> columns) {
 		try {
 			ColumnParent parent = new ColumnParent(columnFamily);
-	        ByteBuffer rowid = ByteBuffer.wrap(rowKey.getBytes());
+	        ByteBuffer rk = ByteBuffer.wrap(rowKey.getBytes());
+	        Cassandra.Client client = getClientConect();
 	        for (Column column : columns) {
-	        	getClientConect().insert(rowid, parent, column, CL_1);
+	        	client.insert(rk, parent, column, CL_1);
 			}
-	        getClientClose();
 		} catch (TTransportException e) {
 			logger.info("unusual exception occurred");
 			logger.error("[Info: db cassandra stopped] - [Error: {}]", e.toString());
@@ -204,6 +207,8 @@ public class CassandraImpl implements ICassandra {
 			logger.error("[Info: time out for insert] - [Error: {}]", e.toString());
 		} catch (TException e) {
 			logger.error("[Info: generic exception of thrift] - [Error: {}]", e.toString());
+		} finally {
+			getClientClose();
 		}
 	}
 	

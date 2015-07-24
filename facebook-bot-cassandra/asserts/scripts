@@ -15,7 +15,7 @@ CREATE COLUMN FAMILY cf_test_column_super WITH column_type = 'Super' AND default
 UPDATE COLUMN FAMILY cf_test_column_super WITH GC_GRACE = 0; // 0 seconds
 
 --create column for test
-CREATE COLUMN FAMILY cf_test_column WITH comparator = UTF8Type AND key_validation_class = UTF8Type AND column_metadata = [{column_name: column, validation_class: UTF8Type}];
+CREATE COLUMN FAMILY cf_test_column WITH comparator = UTF8Type AND key_validation_class = UTF8Type AND column_metadata = [{column_name: name_column, validation_class: UTF8Type}];
 UPDATE COLUMN FAMILY cf_test_column WITH GC_GRACE = 0; // 0 seconds
 
 --create super column
@@ -23,5 +23,5 @@ CREATE COLUMN FAMILY facebook_post WITH column_type = 'Super' AND default_valida
 UPDATE COLUMN FAMILY facebook_post WITH GC_GRACE = 0; // 0 seconds
 
 --create column
-CREATE COLUMN FAMILY facebook_post_popular WITH comparator = UTF8Type AND key_validation_class = UTF8Type AND column_metadata = [{column_name: column, validation_class: UTF8Type}];
+CREATE COLUMN FAMILY facebook_post_popular WITH comparator = UTF8Type AND key_validation_class = UTF8Type AND column_metadata = [{column_name: name_column, validation_class: UTF8Type}];
 UPDATE COLUMN FAMILY facebook_post_popular WITH GC_GRACE = 0; // 0 seconds

@@ -8,8 +8,6 @@ import org.apache.cassandra.thrift.SuperColumn;
 
 public interface ICassandra {
 
-	// TODO: create methods to insert making use of CLI scripts and information no javadoc
-	
 	/**
 	 * Responsible method to insert any kind of super column in DB Cassandra
 	 * 
