@@ -1,5 +1,6 @@
---GC_GRACE = 10; // 10 minutes to remove marked for deletion
---column_type = 'Super' // type is super column
+--GC_GRACE = 10; // 10 seconts to remove marked for deletion
+--INDEX_INTERVAL = 1; // controls the sampling of row keys for each SSTable
+--COLUMN_TYPE = 'Super' // type is super column
 
 --create keyspace
 CREATE KEYSPACE social with placement_strategy = 'org.apache.cassandra.locator.SimpleStrategy' and strategy_options = {replication_factor:1};
@@ -11,17 +12,32 @@ drop column family facebook_post;
 drop column family facebook_post_popular;
 
 --create super column for test
-CREATE COLUMN FAMILY cf_test_column_super WITH column_type = 'Super' AND default_validation_class = 'UTF8Type' AND comparator = 'UTF8Type' AND subcomparator = 'UTF8Type' AND key_validation_class = 'UTF8Type';
-UPDATE COLUMN FAMILY cf_test_column_super WITH GC_GRACE = 0; // 0 seconds
+CREATE COLUMN FAMILY cf_test_column_super WITH column_type = 'Super' AND 
+											   default_validation_class = 'UTF8Type' AND 
+											   comparator = 'UTF8Type' AND 
+											   subcomparator = 'UTF8Type' AND 
+											   key_validation_class = 'UTF8Type' AND
+											   gc_grace = 0 AND
+											   index_interval = 1;
 
 --create column for test
-CREATE COLUMN FAMILY cf_test_column WITH comparator = UTF8Type AND key_validation_class = UTF8Type AND column_metadata = [{column_name: name_column, validation_class: UTF8Type}];
-UPDATE COLUMN FAMILY cf_test_column WITH GC_GRACE = 0; // 0 seconds
+CREATE COLUMN FAMILY cf_test_column WITH comparator = UTF8Type AND 
+										 key_validation_class = UTF8Type AND 
+										 column_metadata = [{column_name: name_column, validation_class: UTF8Type}] AND
+										 gc_grace = 0 AND
+										 index_interval = 1;
 
 --create super column
-CREATE COLUMN FAMILY facebook_post WITH column_type = 'Super' AND default_validation_class = 'UTF8Type' AND comparator = 'UTF8Type' AND subcomparator = 'UTF8Type' AND key_validation_class = 'UTF8Type';
-UPDATE COLUMN FAMILY facebook_post WITH GC_GRACE = 0; // 0 seconds
+CREATE COLUMN FAMILY facebook_post WITH column_type = 'Super' AND 
+										default_validation_class = 'UTF8Type' AND 
+										comparator = 'UTF8Type' AND 
+										subcomparator = 'UTF8Type' AND 
+										key_validation_class = 'UTF8Type' AND
+										gc_grace = 0;
 
 --create column
-CREATE COLUMN FAMILY facebook_post_popular WITH comparator = UTF8Type AND key_validation_class = UTF8Type AND column_metadata = [{column_name: name_column, validation_class: UTF8Type}];
-UPDATE COLUMN FAMILY facebook_post_popular WITH GC_GRACE = 0; // 0 seconds
+CREATE COLUMN FAMILY facebook_post_popular WITH comparator = UTF8Type AND 
+												key_validation_class = UTF8Type AND 
+												column_metadata = [{column_name: name_column, validation_class: UTF8Type}] AND
+												gc_grace = 0 AND
+												index_interval = 1;
