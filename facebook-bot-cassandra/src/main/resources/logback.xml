@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+	<property name="machine-w7" value="C:/developer" />
+	<property name="machine-ubuntu" value="/home/alberto/developer" />
+	
 	<property name="application-name" value="facebook-bot" />
 	<property name="file-log-name" value="cassandra" />
 
@@ -17,7 +20,7 @@
 	
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
 		<!-- "application-name" is a variable -->
-		<File>C:/developer/logs/${application-name}/${file-log-name}.log</File>
+		<File>${machine-w7}/logs/${application-name}/${file-log-name}.log</File>
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<Pattern>%d %p %t %c - %m%n</Pattern>
 		</layout>
