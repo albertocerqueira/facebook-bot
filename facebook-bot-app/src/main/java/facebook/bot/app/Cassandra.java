@@ -120,7 +120,7 @@ public class Cassandra {
 		String rowKey = (type + "-" + rankingPosition);
 		List<ColumnOrSuperColumn> cscs = cassandra.findColumnOrSuperColumn(COLUMN_FAMILY_FACEBOOK_POST_POPULAR, rowKey);
 		if (cscs != null && !cscs.isEmpty()) {
-			return cscs.get(0);// TODO: I need to get the data more timestamp
+			return cscs.get(0);// we are using "index_interval = 1", so we can get the first data
 		} else {
 			return null;
 		}
