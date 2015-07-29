@@ -75,7 +75,7 @@ public class TUser extends Thread {
 				String postId = post.getId();
 				PagableList<Comment> comments = post.getComments();
 				for (Comment comment : comments) {
-					TUser.addUserId(comment.getFrom().getId());// another user to mine information
+					TUser.addUserId(comment.getFrom().getId());// TODO: another user to mine information
 					//FacebookComments.postLikeCount(postId, comment);
 				}
 				*/

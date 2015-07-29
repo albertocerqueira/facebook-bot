@@ -73,10 +73,10 @@ public class TGroup extends Thread {
 				Cassandra.insertPost(post, type);
 				/*
 				String postId = post.getId();
-				TUser.addUserId(post.getFrom().getId());// Mais um usuario para minerar informacao
+				TUser.addUserId(post.getFrom().getId());// TODO: another user to mine information
 				PagableList<Comment> comments = post.getComments();
 				for (Comment comment : comments) {
-					TUser.addUserId(comment.getFrom().getId());// Mais um usuario para minerar informacao
+					TUser.addUserId(comment.getFrom().getId());// TODO: another user to mine information
 					//FacebookComments.postLikeCount(postId, comment);
 				}
 				*/
