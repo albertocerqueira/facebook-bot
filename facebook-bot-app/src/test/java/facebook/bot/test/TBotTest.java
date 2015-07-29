@@ -23,11 +23,11 @@ public class TBotTest {
 		
 		new Thread().sleep(Process.in15Seconds.getTime());
 		
-		carregarBase();
+		loadTypes();
 	}
 	
 	@SuppressWarnings("static-access")
-	private static void carregarBase() throws InterruptedException {
+	private static void loadTypes() throws InterruptedException {
 		FacebookPostTest fpt = new FacebookPostTest();
 		fpt.quantity = 30;
 		while (true) {
